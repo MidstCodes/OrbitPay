@@ -7,7 +7,7 @@
 # It supports testnet and mainnet deployments.
 #
 # Prerequisites:
-#   - Rust toolchain with wasm32-unknown-unknown target installed
+#   - Rust toolchain with wasm32v1-none target installed
 #   - soroban-cli installed (cargo install soroban-cli)
 #   - A funded Stellar account with secret key in SOROBAN_SECRET_KEY env var
 #
@@ -70,7 +70,7 @@ echo ""
 # Prerequisites Check
 # ============================================================================
 
-echo -e "${BLUE}[1/5] Checking prerequisites...${NC}"
+echo -e "${BLUE}[1/4] Checking prerequisites...${NC}"
 
 # Check for soroban CLI
 if ! command -v soroban &>/dev/null; then
@@ -97,7 +97,7 @@ echo ""
 # Build Contracts
 # ============================================================================
 
-echo -e "${BLUE}[2/5] Building contracts...${NC}"
+echo -e "${BLUE}[2/4] Building contracts...${NC}"
 
 cd "$CONTRACTS_DIR"
 
@@ -110,50 +110,29 @@ echo -e "${GREEN}Build complete${NC}"
 echo ""
 
 # ============================================================================
-# Install Contracts
-# ============================================================================
-
-echo -e "${BLUE}[3/5] Installing contracts to network...${NC}"
-
-declare -A CONTRACT_IDS
-
-# First, install all contracts to get their WASM hashes
-for contract in "${CONTRACTS[@]}"; do
-    WASM_FILE="$TARGET_DIR/$contract.wasm"
-    
-    if [ ! -f "$WASM_FILE" ]; then
-        echo -e "${RED}Error: WASM file not found: $WASM_FILE${NC}"
-        exit 1
-    fi
-    
-    echo -e "  Installing ${YELLOW}$contract${NC}..."
-    
-    INSTALL_OUTPUT=$(soroban contract install \
-        --wasm "$WASM_FILE" \
-        --source "$SOROBAN_SECRET_KEY" \
-        --rpc-url "$RPC_URL" \
-        --network-passphrase "$PASSPHRASE" 2>&1)
-    
-    echo -e "    ${GREEN}Installed:${NC} $INSTALL_OUTPUT"
-    CONTRACT_IDS["$contract"]="$INSTALL_OUTPUT"
-done
-
-echo -e "${GREEN}Installation complete${NC}"
-echo ""
-
-# ============================================================================
 # Deploy Contracts
 # ============================================================================
+# The `soroban contract deploy --wasm` command handles both
+# installing the WASM blob and creating the contract instance.
 
-echo -e "${BLUE}[4/5] Deploying contracts...${NC}"
+echo -e "${BLUE}[3/4] Deploying contracts...${NC}"
 
 declare -A CONTRACT_ADDRESSES
 
 for contract in "${CONTRACTS[@]}"; do
+    wasm_name="${contract//-/_}"
+    WASM_FILE="$TARGET_DIR/${wasm_name}.wasm"
+    
+    if [ ! -f "$WASM_FILE" ]; then
+        echo -e "${RED}Error: WASM file not found: $WASM_FILE${NC}"
+        ls "$TARGET_DIR"/*.wasm 2>/dev/null || echo "  (no .wasm files in $TARGET_DIR)"
+        exit 1
+    fi
+    
     echo -e "  Deploying ${YELLOW}$contract${NC}..."
     
     DEPLOY_OUTPUT=$(soroban contract deploy \
-        --wasm "$TARGET_DIR/$contract.wasm" \
+        --wasm "$WASM_FILE" \
         --source "$SOROBAN_SECRET_KEY" \
         --rpc-url "$RPC_URL" \
         --network-passphrase "$PASSPHRASE" 2>&1)
@@ -170,7 +149,7 @@ echo ""
 # Output Configuration
 # ============================================================================
 
-echo -e "${BLUE}[5/5] Deployment configuration${NC}"
+echo -e "${BLUE}[4/4] Deployment summary${NC}"
 echo ""
 echo -e "${YELLOW}=== Environment Variables (add to .env.local) ===${NC}"
 echo ""
