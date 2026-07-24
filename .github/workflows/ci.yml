@@ -1,0 +1,208 @@
+# ============================================================================
+# OrbitPay CI/CD Pipeline
+# ============================================================================
+# Runs on every push and pull request to main.
+# Includes: dependency installation, linting, type checking, testing, and build.
+# ============================================================================
+
+name: OrbitPay CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '20'
+  RUST_VERSION: '1.75'
+
+jobs:
+  # ==========================================================================
+  # Quality Checks (frontend)
+  # ==========================================================================
+  frontend-quality:
+    name: Frontend Quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_NETWORK: testnet
+          NEXT_PUBLIC_NETWORK_PASSPHRASE: "Test SDF Network ; September 2015"
+          NEXT_PUBLIC_HORIZON_URL: https://horizon-testnet.stellar.org
+          NEXT_PUBLIC_RPC_URL: https://soroban-testnet.stellar.org
+
+  # ==========================================================================
+  # Frontend Tests
+  # ==========================================================================
+  frontend-tests:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test -- --ci --coverage
+        env:
+          CI: true
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/
+
+  # ==========================================================================
+  # Smart Contract Tests
+  # ==========================================================================
+  contract-tests:
+    name: Smart Contract Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: ${{ env.RUST_VERSION }}
+          target: wasm32-unknown-unknown
+
+      - name: Cache Cargo dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            contracts/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('contracts/**/Cargo.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Build contracts
+        run: |
+          cd contracts
+          cargo build --release --target wasm32-unknown-unknown 2>&1 | tail -5
+        continue-on-error: true
+
+      - name: Run contract tests
+        run: |
+          cd contracts
+          cargo test 2>&1
+
+  # ==========================================================================
+  # Build and Deploy Preview
+  # ==========================================================================
+  deploy-preview:
+    name: Build Preview
+    needs: [frontend-quality, frontend-tests]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+        env:
+          NEXT_PUBLIC_NETWORK: testnet
+          NEXT_PUBLIC_NETWORK_PASSPHRASE: "Test SDF Network ; September 2015"
+          NEXT_PUBLIC_HORIZON_URL: https://horizon-testnet.stellar.org
+          NEXT_PUBLIC_RPC_URL: https://soroban-testnet.stellar.org
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: orbitpay-preview
+          path: .next/
+
+  # ==========================================================================
+  # Production Deployment
+  # ==========================================================================
+  deploy-production:
+    name: Deploy Production
+    needs: [frontend-quality, frontend-tests, contract-tests]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build production bundle
+        run: npm run build
+        env:
+          NEXT_PUBLIC_NETWORK: ${{ vars.NEXT_PUBLIC_NETWORK }}
+          NEXT_PUBLIC_NETWORK_PASSPHRASE: ${{ secrets.NETWORK_PASSPHRASE }}
+          NEXT_PUBLIC_HORIZON_URL: ${{ vars.HORIZON_URL }}
+          NEXT_PUBLIC_RPC_URL: ${{ vars.RPC_URL }}
+          NEXT_PUBLIC_PAYMENT_CONTRACT_ADDRESS: ${{ secrets.PAYMENT_CONTRACT_ADDRESS }}
+          NEXT_PUBLIC_NOTIFICATION_CONTRACT_ADDRESS: ${{ secrets.NOTIFICATION_CONTRACT_ADDRESS }}
+          NEXT_PUBLIC_HISTORY_CONTRACT_ADDRESS: ${{ secrets.HISTORY_CONTRACT_ADDRESS }}
+
+      - name: Deploy to production
+        run: echo "Deploying to production... (configure your deployment target here)"
+        # TODO: Add actual deployment step (e.g., Vercel, Docker, etc.)
+        # For Vercel:
+        # - uses: amondnet/vercel-action@v20
+        #   with:
+        #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        #     vercel-args: '--prod'
