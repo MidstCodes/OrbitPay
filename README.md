@@ -363,20 +363,208 @@ npm run build:contracts
 npm run test:contracts
 ```
 
-### Deploying Contracts
+> **Demo Note:** The frontend works out-of-the-box without deployed contracts using **simulated data**. To interact with real Stellar Soroban contracts, follow the step-by-step deployment guide below.
+
+---
+
+### 📖 Step-by-Step: Deploy from a Local Machine
+
+This guide walks you through deploying OrbitPay's Soroban smart contracts to Stellar testnet from your local machine.
+
+#### Prerequisites
+
+| Requirement | Version | Check command |
+|-------------|---------|--------------|
+| **Rust** | 1.79+ | `rustc --version` |
+| **WASM target** | `wasm32v1-none` | `rustup target list --installed │ grep wasm32` |
+| **Soroban CLI** | 21+ | `soroban version` |
+| **npm** | 9+ | `npm --version` |
+| **Stellar testnet account** | funded | — |
+
+#### Step 1 — Clone the Repository
 
 ```bash
-# Set your secret key
-export SOROBAN_SECRET_KEY=SC...
-
-# Deploy to testnet
-./scripts/deploy.sh
-
-# Deploy to mainnet
-NETWORK=mainnet ./scripts/deploy.sh
+git clone https://github.com/your-org/orbitpay.git
+cd orbitpay
+npm install
 ```
 
-After deployment, copy the contract addresses to your `.env.local` file (.env.template is provided as a reference).
+#### Step 2 — Install the Soroban CLI
+
+The Soroban CLI is required to deploy contracts. Install it via Cargo (~10 minutes):
+
+```bash
+source "$HOME/.cargo/env"  # if in a new terminal
+cargo install soroban-cli
+```
+
+> **⏱ Why so long?** Cargo compiles the CLI from source. Subsequent installs use cached dependencies.
+
+Verify installation:
+```bash
+soroban version
+# Expected: 21.x.x or later
+```
+
+#### Step 3 — Add the WASM Target
+
+```bash
+rustup target add wasm32v1-none
+# Verified:
+rustup target list --installed | grep wasm32v1-none
+```
+
+#### Step 4 — Set Up a Testnet Account
+
+You need a Stellar keypair funded with testnet XLM. Generate one:
+
+```bash
+# Generate a new keypair and fund it via Friendbot
+soroban keys generate --rpc-url https://soroban-testnet.stellar.org \
+  --network-passphrase "Test SDF Network ; September 2015" \
+  --friendbot-url https://friendbot.stellar.org
+
+# Show the generated secret key
+export SOROBAN_SECRET_KEY=$(soroban keys show)
+echo "Secret key: $SOROBAN_SECRET_KEY"
+```
+
+Or use an existing keypair:
+```bash
+export SOROBAN_SECRET_KEY=SCXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+```
+
+Fund the account via the Stellar Lab or Friendbot:
+```bash
+curl -X GET "https://friendbot.stellar.org?addr=$(soroban keys address)"
+```
+
+#### Step 5 — Build the WASM Contracts
+
+From the project root:
+
+```bash
+cd contracts
+CARGO_BUILD_TARGET=wasm32v1-none cargo build --release
+```
+
+Expected output (3 contracts):
+```
+   Compiling orbitpay-payment v1.0.0
+   Compiling orbitpay-notification v1.0.0
+   Compiling orbitpay-history v1.0.0
+    Finished `release` profile [optimized] target(s) in 10.32s
+```
+
+Verify WASM files were created:
+```bash
+ls -la target/wasm32v1-none/release/*.wasm
+#   orbitpay_payment.wasm     (~28 KB)
+#   orbitpay_notification.wasm (~18 KB)
+#   orbitpay_history.wasm     (~18 KB)
+```
+
+> **Note:** The WASM files use underscores (e.g. `orbitpay_payment.wasm`) while the Cargo packages use hyphens (`orbitpay-payment`). Cargo converts hyphens to underscores for the output filename. The deploy scripts handle this correctly.
+
+#### Step 6 — Deploy Contracts
+
+Now deploy the contracts to testnet. There are **three methods** — pick one:
+
+##### Option A: One-Liner with Soroban CLI (simplest)
+
+The Soroban CLI v21+ supports a combined `deploy` command that installs + creates in one step:
+
+```bash
+cd contracts
+CARGO_BUILD_TARGET=wasm32v1-none cargo build --release
+
+for contract in orbitpay-payment orbitpay-notification orbitpay-history; do
+  echo "Deploying $contract..."
+  soroban contract deploy \
+    --wasm target/wasm32v1-none/release/${contract//-/_}.wasm \
+    --source "$SOROBAN_SECRET_KEY" \
+    --rpc-url https://soroban-testnet.stellar.org \
+    --network-passphrase "Test SDF Network ; September 2015"
+done
+```
+
+##### Option B: Bash Script (full workflow)
+
+```bash
+cd ..  # back to project root
+export SOROBAN_SECRET_KEY=SC...  # if not already set
+./scripts/deploy.sh
+```
+
+What `deploy.sh` does:
+1. ✅ Checks prerequisites (soroban CLI, secret key)
+2. ✅ Builds all three contracts
+3. ✅ **Installs** each WASM to the network (returns WASM hash)
+4. ✅ **Deploys** each contract (returns contract address)
+5. ✅ Prints environment variables and explorer links
+
+##### Option C: Node.js Script (auto-updates `.env.template`)
+
+```bash
+cd ..
+export SOROBAN_SECRET_KEY=SC...
+node scripts/deploy-testnet.mjs
+```
+
+The Node.js script has the same two-step flow (install → deploy) but additionally **auto-writes** the deployed addresses into `.env.template`.
+
+#### Step 7 — Update Environment Variables
+
+Copy the deployed addresses into your local environment:
+
+```bash
+cp .env.template .env.local
+```
+
+If you used the **Node.js script**, `.env.template` is already updated. Just copy it:
+```bash
+cp .env.template .env.local
+```
+
+If you used the **bash script**, manually copy the printed addresses:
+```bash
+echo "NEXT_PUBLIC_PAYMENT_CONTRACT_ADDRESS=<payment-address>" >> .env.local
+echo "NEXT_PUBLIC_NOTIFICATION_CONTRACT_ADDRESS=<notification-address>" >> .env.local
+echo "NEXT_PUBLIC_HISTORY_CONTRACT_ADDRESS=<history-address>" >> .env.local
+```
+
+#### Step 8 — Verify the Deployment
+
+Check the contracts on Stellar Expert:
+
+- **Testnet Explorer:** https://stellar.expert/explorer/testnet
+- Paste each contract address into the search bar
+
+You should see:
+- Contract creation transaction
+- Contract code (WASM hash)
+- Storage entries (when you interact with the contract)
+
+#### Step 9 — Run the App with Real Contracts
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000), connect Freighter wallet, and create real payments on Stellar testnet!
+
+---
+
+### 🔧 Troubleshooting Local Deployment
+
+| Problem | Solution |
+|---------|----------|
+| `soroban: command not found` | Run `source "$HOME/.cargo/env"` to add Cargo to PATH |
+| `WASM file not found` | Verify the build target: `ls contracts/target/wasm32v1-none/release/*.wasm` |
+| `HostError: Error(WasmVm, InvalidAction)` | Soroban CLI / SDK version mismatch. Run `soroban version` and ensure the testnet supports it |
+| `Account not funded` | Fund via Friendbot: `curl https://friendbot.stellar.org?addr=<your-public-key>` |
+| `soroban keys generate` fails | Try `soroban keys generate --rpc-url https://soroban-testnet.stellar.org --network-passphrase "Test SDF Network ; September 2015"` |
+| `Transaction simulation failed` | The testnet RPC may be temporarily degraded. Wait and retry |
 
 ### Contract Addresses
 
@@ -388,7 +576,7 @@ _Update these after deployment:_
 | **Notification** | *(deploy to get)* | *(deploy to get)* |
 | **History** | *(deploy to get)* | *(deploy to get)* |
 
-> **Demo Note:** The frontend works without deployed contracts using simulated data. To interact with real contracts, deploy them and update `.env.local`.
+---
 
 ---
 

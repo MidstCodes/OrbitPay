@@ -57,7 +57,7 @@ PASSPHRASE="${NETWORK_CONFIGS[${NETWORK}_passphrase]}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 CONTRACTS_DIR="$PROJECT_DIR/contracts"
-TARGET_DIR="$CONTRACTS_DIR/target/wasm32-unknown-unknown/release"
+TARGET_DIR="$CONTRACTS_DIR/target/wasm32v1-none/release"
 
 # Contract names
 CONTRACTS=("orbitpay-payment" "orbitpay-notification" "orbitpay-history")
@@ -84,8 +84,9 @@ if [ -z "${SOROBAN_SECRET_KEY:-}" ]; then
     echo "Set it to your Stellar account secret key:"
     echo "  export SOROBAN_SECRET_KEY=SCXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
     echo ""
-    echo "Or for testnet, you can use a test account:"
-    echo "  export SOROBAN_SECRET_KEY=$(soroban keys generate)"
+    echo "Or for testnet, generate a new keypair (add --global to persist):"
+    echo "  soroban keys generate --global --rpc-url \"$RPC_URL\" --network-passphrase \"$PASSPHRASE\""
+    echo "  export SOROBAN_SECRET_KEY=\$(soroban keys show)"
     exit 1
 fi
 
@@ -102,7 +103,7 @@ cd "$CONTRACTS_DIR"
 
 for contract in "${CONTRACTS[@]}"; do
     echo -e "  Building ${YELLOW}$contract${NC}..."
-    cargo build --package "$contract" --release --target wasm32-unknown-unknown
+    CARGO_BUILD_TARGET=wasm32v1-none cargo build --package "$contract" --release
 done
 
 echo -e "${GREEN}Build complete${NC}"

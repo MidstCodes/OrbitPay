@@ -87,7 +87,7 @@ impl HistoryContract {
 
 impl HistoryContract {
     fn get_next_index(env: &Env) -> u64 {
-        let mut index: u64 = env.storage().instance().get(&DataKey::TotalEntries).unwrap_or(1);
+        let index: u64 = env.storage().instance().get(&DataKey::TotalEntries).unwrap_or(1);
         env.storage().instance().set(&DataKey::TotalEntries, &(index + 1));
         index
     }

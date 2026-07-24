@@ -171,7 +171,7 @@ impl OrbitPayContract {
 
 impl OrbitPayContract {
     fn get_next_id(env: &Env) -> u64 {
-        let mut id: u64 = env.storage().instance().get(&DataKey::PaymentCount).unwrap_or(1);
+        let id: u64 = env.storage().instance().get(&DataKey::PaymentCount).unwrap_or(1);
         env.storage().instance().set(&DataKey::PaymentCount, &(id + 1));
         id
     }
