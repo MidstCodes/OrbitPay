@@ -138,6 +138,7 @@ The application feels like a commercial fintech dashboard rather than a blockcha
 | **Wallet** | Freighter (Stellar browser extension) |
 | **SDK** | @stellar/stellar-sdk, @stellar/freighter-api |
 | **Testing** | Vitest, Testing Library, cargo test |
+| **Charts** | Recharts (payment analytics) |
 | **CI/CD** | GitHub Actions |
 | **Package Manager** | npm |
 | **Linting** | ESLint, Prettier |
@@ -250,7 +251,7 @@ cd orbitpay
 npm install
 
 # 3. Copy environment variables
-cp .env.example .env.local
+cp .env.template .env.local
 
 # 4. Start the development server
 npm run dev
@@ -289,9 +290,9 @@ The demo runs in **simulation mode** — no Freighter wallet or deployed contrac
 | `NEXT_PUBLIC_NETWORK_PASSPHRASE` | Network passphrase | Testnet passphrase |
 | `NEXT_PUBLIC_HORIZON_URL` | Horizon API URL | Testnet Horizon |
 | `NEXT_PUBLIC_RPC_URL` | Soroban RPC URL | Testnet RPC |
-| `NEXT_PUBLIC_PAYMENT_CONTRACT_ADDRESS` | Deployed Payment contract address | *(empty)* |
-| `NEXT_PUBLIC_NOTIFICATION_CONTRACT_ADDRESS` | Deployed Notification contract address | *(empty)* |
-| `NEXT_PUBLIC_HISTORY_CONTRACT_ADDRESS` | Deployed History contract address | *(empty)* |
+| `NEXT_PUBLIC_PAYMENT_CONTRACT_ADDRESS` | Deployed Payment contract address | *(empty, use simulation)* |
+| `NEXT_PUBLIC_NOTIFICATION_CONTRACT_ADDRESS` | Deployed Notification contract address | *(empty, use simulation)* |
+| `NEXT_PUBLIC_HISTORY_CONTRACT_ADDRESS` | Deployed History contract address | *(empty, use simulation)* |
 | `NEXT_PUBLIC_ENABLE_EVENTS` | Enable real-time event streaming | `true` |
 | `NEXT_PUBLIC_POLL_INTERVAL_MS` | Event polling interval | `5000` |
 
@@ -375,7 +376,7 @@ export SOROBAN_SECRET_KEY=SC...
 NETWORK=mainnet ./scripts/deploy.sh
 ```
 
-After deployment, copy the contract addresses to your `.env.local` file.
+After deployment, copy the contract addresses to your `.env.local` file (.env.template is provided as a reference).
 
 ### Contract Addresses
 
@@ -497,9 +498,9 @@ The application handles these error scenarios gracefully:
 - [x] CI/CD pipeline
 - [ ] Mainnet deployment
 - [ ] Multi-signature support for payments
-- [ ] Stellar assets (USDC, EURT) balance display
+- [x] Stellar assets (USDC, EURT) balance display
 - [ ] Push notifications via WebSocket
-- [ ] Payment analytics dashboard (charts + graphs)
+- [x] Payment analytics dashboard (charts + graphs)
 - [ ] Batch payment processing
 - [ ] Mobile app (React Native)
 - [ ] Subgraph integration (The Graph)
