@@ -1,0 +1,23 @@
+[package]
+name = "orbitpay-history"
+version = "1.0.0"
+edition = "2021"
+description = "OrbitPay History Tracking Smart Contract for Stellar Soroban"
+
+[lib]
+crate-type = ["cdylib"]
+doctest = false
+
+[dependencies]
+soroban-sdk = "27.0.0-rc.1"
+
+[dev-dependencies]
+soroban-sdk = { version = "27.0.0-rc.1", features = ["testutils"] }
+
+[profile.release]
+opt-level = "z"
+overflow-checks = true
+debug = 0
+strip = "symbols"
+lto = true
+codegen-units = 1
