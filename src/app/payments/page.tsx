@@ -10,7 +10,6 @@ import { PaymentTracker } from '@/components/dashboard/PaymentTracker';
 import { Modal } from '@/components/ui/Modal';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { CreatePaymentForm } from '@/components/dashboard/CreatePaymentForm';
-import { useToast } from '@/providers/AppProvider';
 
 export default function PaymentsPage() {
   const { wallet } = useWalletContext();

@@ -5,7 +5,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Footer } from '@/components/layout/Footer';
 import { getConfig } from '@/config';
-import { buildExplorerUrl } from '@/lib/stellar';
+import { buildAccountExplorerUrl } from '@/lib/stellar';
 
 export default function ContractsPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -66,7 +66,7 @@ export default function ContractsPage() {
                   </div>
                   {contract.deployed && (
                     <a
-                      href={buildExplorerUrl(contract.address)}
+                      href={buildAccountExplorerUrl(contract.address)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="mt-3 inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700"
