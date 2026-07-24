@@ -7,17 +7,10 @@ import {
   createPayment as contractCreatePayment,
   confirmPayment as contractConfirmPayment,
   cancelPayment as contractCancelPayment,
-  getPayment as contractGetPayment,
   getPayments as contractGetPayments,
 } from './contracts';
-import {
-  Payment,
-  CreatePaymentRequest,
-  TransactionLifecycle,
-  TransactionState,
-} from '@/types';
+import { Payment, CreatePaymentRequest, TransactionLifecycle, TransactionState } from '@/types';
 import { generateId } from '@/lib/utils';
-import { TRANSACTION_TIMEOUT_MS } from '@/constants';
 
 // ============================================================================
 // Transaction Lifecycle Management
@@ -52,7 +45,10 @@ function createTransaction(paymentId: number | null = null): TransactionLifecycl
 /**
  * Updates a transaction's state and notifies listeners.
  */
-function updateTransaction(txId: string, updates: Partial<TransactionLifecycle>): TransactionLifecycle {
+function updateTransaction(
+  txId: string,
+  updates: Partial<TransactionLifecycle>,
+): TransactionLifecycle {
   const tx = activeTransactions.get(txId);
   if (!tx) throw new Error(`Transaction ${txId} not found`);
 
@@ -68,16 +64,20 @@ function updateTransaction(txId: string, updates: Partial<TransactionLifecycle>)
 
 /**
  * Subscribes to transaction state changes.
+ * Immediately invokes the callback with the current state if available.
  * Returns an unsubscribe function.
  */
-export function onTransactionUpdate(
-  txId: string,
-  callback: TransactionCallback
-): () => void {
+export function onTransactionUpdate(txId: string, callback: TransactionCallback): () => void {
   if (!transactionListeners.has(txId)) {
     transactionListeners.set(txId, new Set());
   }
   transactionListeners.get(txId)!.add(callback);
+
+  // Immediately notify with current state
+  const currentTx = activeTransactions.get(txId);
+  if (currentTx) {
+    callback(currentTx);
+  }
 
   return () => {
     transactionListeners.get(txId)?.delete(callback);
@@ -95,8 +95,15 @@ export function getTransaction(txId: string): TransactionLifecycle | undefined {
  * Gets all active transactions.
  */
 export function getAllTransactions(): TransactionLifecycle[] {
-  return Array.from(activeTransactions.values())
-    .sort((a, b) => b.startedAt - a.startedAt);
+  return Array.from(activeTransactions.values()).sort((a, b) => b.startedAt - a.startedAt);
+}
+
+/**
+ * Clears all tracked transactions (useful for testing).
+ */
+export function clearTransactions(): void {
+  activeTransactions.clear();
+  transactionListeners.clear();
 }
 
 // ============================================================================
@@ -112,19 +119,16 @@ export function getAllTransactions(): TransactionLifecycle[] {
  */
 export async function initiatePayment(
   request: CreatePaymentRequest,
-  onStateChange?: (state: TransactionState) => void
+  onStateChange?: (state: TransactionState) => void,
 ): Promise<string> {
   const tx = createTransaction();
   const txId = tx.id;
-
-  // Clean up auth requirement - simply create the payment
-  // Authorization is handled by the contract layer
 
   try {
     // Step 1: Preparing
     updateTransaction(txId, { state: 'preparing' });
     onStateChange?.('preparing');
-    await new Promise((r) => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 100));
 
     // Step 2: Submit to contract
     updateTransaction(txId, { state: 'submitting' });
@@ -134,7 +138,7 @@ export async function initiatePayment(
       request.payee,
       request.amount,
       request.asset,
-      request.metadata
+      request.metadata,
     );
 
     // Step 3: Pending confirmation
@@ -172,7 +176,7 @@ export async function initiatePayment(
  */
 export async function initiateConfirmPayment(
   paymentId: number,
-  onStateChange?: (state: TransactionState) => void
+  onStateChange?: (state: TransactionState) => void,
 ): Promise<string> {
   const tx = createTransaction(paymentId);
   const txId = tx.id;
@@ -205,7 +209,7 @@ export async function initiateConfirmPayment(
  */
 export async function initiateCancelPayment(
   paymentId: number,
-  onStateChange?: (state: TransactionState) => void
+  onStateChange?: (state: TransactionState) => void,
 ): Promise<string> {
   const tx = createTransaction(paymentId);
   const txId = tx.id;
@@ -241,7 +245,7 @@ export async function fetchPayments(
   role: 'payer' | 'payee' = 'payer',
   page = 0,
   pageSize = 10,
-  filters?: { status?: string; search?: string; asset?: string }
+  filters?: { status?: string; search?: string; asset?: string },
 ): Promise<{ payments: Payment[]; total: number }> {
   let payments = await contractGetPayments(address, role, page, pageSize);
 
@@ -258,7 +262,7 @@ export async function fetchPayments(
       (p) =>
         p.metadata.toLowerCase().includes(query) ||
         p.payee.toLowerCase().includes(query) ||
-        p.payer.toLowerCase().includes(query)
+        p.payer.toLowerCase().includes(query),
     );
   }
 

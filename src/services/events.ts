@@ -4,7 +4,7 @@
  */
 
 import { Payment, PaymentEvent, ActivityItem } from '@/types';
-import { generateId, formatRelativeTime } from '@/lib/utils';
+import { generateId } from '@/lib/utils';
 import { POLL_INTERVAL_MS } from '@/constants';
 
 // ============================================================================
@@ -59,10 +59,7 @@ export function stopEventPolling(): void {
  * Subscribes to events of a specific type.
  * Returns an unsubscribe function.
  */
-export function subscribeToEvents(
-  type: string,
-  handler: EventHandler
-): () => void {
+export function subscribeToEvents(type: string, handler: EventHandler): () => void {
   if (!handlers.has(type)) {
     handlers.set(type, new Set());
   }
@@ -120,6 +117,7 @@ export function dispatchEvent(event: PaymentEvent): void {
 
 /**
  * Converts a Payment object into an ActivityItem for the feed.
+ * Used by components to display payment events in the activity feed.
  */
 export function paymentToActivity(payment: Payment): ActivityItem {
   const typeMap: Record<string, 'payment_created' | 'payment_confirmed' | 'payment_cancelled'> = {
@@ -129,9 +127,9 @@ export function paymentToActivity(payment: Payment): ActivityItem {
   };
 
   const messageMap: Record<string, string> = {
-    payment_created: `Payment #${payment.id} created — ${payment.amount} ${payment.asset}`,
-    payment_confirmed: `Payment #${payment.id} confirmed — ${payment.amount} ${payment.asset}`,
-    payment_cancelled: `Payment #${payment.id} cancelled — ${payment.amount} ${payment.asset}`,
+    payment_created: `Payment #${payment.id} created — ${Number(payment.amount) / 10_000_000} ${payment.asset}`,
+    payment_confirmed: `Payment #${payment.id} confirmed — ${Number(payment.amount) / 10_000_000} ${payment.asset}`,
+    payment_cancelled: `Payment #${payment.id} cancelled — ${Number(payment.amount) / 10_000_000} ${payment.asset}`,
   };
 
   const type = typeMap[payment.status] || 'payment_created';
@@ -151,8 +149,7 @@ export function paymentToActivity(payment: Payment): ActivityItem {
 
 /**
  * Polls Horizon for new contract events.
- * This is a development placeholder that generates simulated events
- * to demonstrate the event streaming architecture.
+ * In production, this would query the Soroban RPC endpoint for contract events.
  */
 async function pollForEvents(): Promise<void> {
   try {
@@ -167,11 +164,12 @@ async function pollForEvents(): Promise<void> {
     const payments = await getDemoPayments();
     for (const payment of payments) {
       const event: PaymentEvent = {
-        type: payment.status === 'Pending'
-          ? 'payment_created'
-          : payment.status === 'Confirmed'
-          ? 'payment_confirmed'
-          : 'payment_cancelled',
+        type:
+          payment.status === 'Pending'
+            ? 'payment_created'
+            : payment.status === 'Confirmed'
+              ? 'payment_confirmed'
+              : 'payment_cancelled',
         data: { ...payment, amount: Number(payment.amount) },
         timestamp: payment.updated_at,
       };

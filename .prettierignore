@@ -1,0 +1,6 @@
+node_modules
+.next
+out
+coverage
+contracts/target
+*.wasm
