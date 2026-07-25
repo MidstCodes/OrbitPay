@@ -141,19 +141,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build application
-        run: npm run build
-        env:
-          NEXT_PUBLIC_NETWORK: testnet
-          NEXT_PUBLIC_NETWORK_PASSPHRASE: "Test SDF Network ; September 2015"
-          NEXT_PUBLIC_HORIZON_URL: https://horizon-testnet.stellar.org
-          NEXT_PUBLIC_RPC_URL: https://soroban-testnet.stellar.org
+      - name: Pull Vercel environment
+        run: npx vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: orbitpay-preview
-          path: .next/
+      - name: Build with Vercel
+        run: npx vercel build --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy preview to Vercel
+        run: |
+          url=$(npx vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "Preview URL: $url"
+          echo "preview_url=$url" >> $GITHUB_OUTPUT
 
   # ==========================================================================
   # Production Deployment
@@ -177,28 +175,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build production bundle
-        run: npm run build
-        env:
-          NEXT_PUBLIC_NETWORK: ${{ vars.NEXT_PUBLIC_NETWORK }}
-          NEXT_PUBLIC_NETWORK_PASSPHRASE: ${{ secrets.NETWORK_PASSPHRASE }}
-          NEXT_PUBLIC_HORIZON_URL: ${{ vars.HORIZON_URL }}
-          NEXT_PUBLIC_RPC_URL: ${{ vars.RPC_URL }}
-          NEXT_PUBLIC_PAYMENT_CONTRACT_ADDRESS: ${{ secrets.PAYMENT_CONTRACT_ADDRESS }}
-          NEXT_PUBLIC_NOTIFICATION_CONTRACT_ADDRESS: ${{ secrets.NOTIFICATION_CONTRACT_ADDRESS }}
-          NEXT_PUBLIC_HISTORY_CONTRACT_ADDRESS: ${{ secrets.HISTORY_CONTRACT_ADDRESS }}
+      - name: Pull Vercel environment (production)
+        run: npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Deploy to production
-        run: |
-          echo "Production deployment ready."
-          echo "Configure your deployment target in the steps below:"
-          echo "  - Vercel: use amondnet/vercel-action@v20"
-          echo "  - Docker: build and push to container registry"
-          echo "  - Custom server: copy .next/ to your server"
-        # To enable Vercel deployment, uncomment:
-        # - uses: amondnet/vercel-action@v20
-        #   with:
-        #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
-        #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-        #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-        #     vercel-args: '--prod'
+      - name: Build with Vercel
+        run: npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Vercel (Production)
+        run: npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}

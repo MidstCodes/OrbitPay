@@ -36,8 +36,9 @@ yarn-error.log*
 # demo video intermediate frames
 docs/video-frames/
 
-# vercel
-.vercel
+# vercel (project.json is needed for CI deployments)
+.vercel/*
+!.vercel/project.json
 
 # typescript
 *.tsbuildinfo
