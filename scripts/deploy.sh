@@ -82,7 +82,7 @@ fi
 if [ -z "${SOROBAN_SECRET_KEY:-}" ]; then
     echo -e "${RED}Error: SOROBAN_SECRET_KEY environment variable is not set.${NC}"
     echo "Set it to your Stellar account secret key:"
-    echo "  export SOROBAN_SECRET_KEY=SCXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    echo "  export SOROBAN_SECRET_KEY=SC... (replace with your actual key)"
     echo ""
     echo "Or for testnet, generate a new keypair (add --global to persist):"
     echo "  soroban keys generate --global --rpc-url \"$RPC_URL\" --network-passphrase \"$PASSPHRASE\""

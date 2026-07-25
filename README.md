@@ -282,6 +282,48 @@ The demo runs in **simulation mode** — no Freighter wallet or deployed contrac
 
 ---
 
+## 📸 Screenshots
+
+### Mobile Responsive UI
+
+> *Screenshot placeholder — add a screenshot showing the OrbitPay dashboard on a mobile device viewport.*
+>
+> To capture:
+> 1. Open the deployed app or `http://localhost:3000`
+> 2. Open Chrome DevTools → Toggle Device Toolbar (Ctrl+Shift+M)
+> 3. Select a mobile device (e.g., iPhone 14, Pixel 7)
+> 4. Capture the full-page screenshot
+> 5. Save as `docs/screenshots/mobile-responsive.png`
+
+![Mobile Responsive UI](docs/screenshots/mobile-responsive.png)
+
+### CI/CD Pipeline Passing
+
+> *Screenshot placeholder — add a screenshot showing all GitHub Actions jobs passing.*
+>
+> To capture:
+> 1. Navigate to your repo's Actions tab: `https://github.com/your-org/orbitpay/actions`
+> 2. Click the latest successful workflow run
+> 3. Capture the full pipeline showing all 5 jobs (Frontend Quality, Frontend Tests, Contract Tests, Build Preview, Deploy Production) in green
+> 4. Save as `docs/screenshots/ci-pipeline.png`
+
+![CI/CD Pipeline](docs/screenshots/ci-pipeline.png)
+
+### Test Output Passing
+
+> *Screenshot placeholder — add a screenshot showing test output with 3+ passing tests.*
+>
+> To capture:
+> 1. Create screenshots directory: `mkdir -p docs/screenshots`
+> 2. Run frontend tests: `npm test` (53 tests)
+> 3. Run contract tests: `cd contracts && cargo test` (12 tests: Payment=6, Notification=3, History=3)
+> 4. Capture the terminal output showing **65 total tests passing**
+> 5. Save as `docs/screenshots/test-output.png`
+
+![Test Output](docs/screenshots/test-output.png)
+
+---
+
 ## 🔐 Environment Variables
 
 | Variable | Description | Default |
@@ -499,9 +541,8 @@ export SOROBAN_SECRET_KEY=SC...  # if not already set
 What `deploy.sh` does:
 1. ✅ Checks prerequisites (soroban CLI, secret key)
 2. ✅ Builds all three contracts
-3. ✅ **Installs** each WASM to the network (returns WASM hash)
-4. ✅ **Deploys** each contract (returns contract address)
-5. ✅ Prints environment variables and explorer links
+3. ✅ **Deploys** each contract using `soroban contract deploy --wasm` (handles install + create in one step)
+4. ✅ Prints contract addresses and Stellar Explorer links
 
 ##### Option C: Node.js Script (auto-updates `.env.template`)
 
@@ -568,7 +609,7 @@ Open [http://localhost:3000](http://localhost:3000), connect Freighter wallet, a
 
 ### Contract Addresses
 
-_Update these after deployment:_
+_Update these after deploying to testnet. Until then, the frontend runs in simulation mode._
 
 | Contract | Testnet Address | Mainnet Address |
 |----------|----------------|-----------------|
@@ -576,7 +617,32 @@ _Update these after deployment:_
 | **Notification** | *(deploy to get)* | *(deploy to get)* |
 | **History** | *(deploy to get)* | *(deploy to get)* |
 
+### Transaction Hash (Contract Interaction)
+
+_Update this after creating a payment on testnet._
+
+| Transaction | Hash | Explorer Link |
+|-------------|------|---------------|
+| Example payment creation | *(send a transaction)* | *(paste explorer link)* |
+
 ---
+
+---
+
+## 🎥 Demo Video
+
+> *Video placeholder — record a 1–2 minute demo showing:*
+>
+> 1. **Dashboard** — Overview of analytics, payment tracker, activity feed
+> 2. **Create Payment** — Walk through creating a new payment
+> 3. **Payment Tracker** — Search, filter, and sort payments
+> 4. **Activity Feed** — Show real-time events
+> 5. **Responsive** — Toggle to mobile viewport briefly
+> 6. **Contracts** — Show the deployed contract status page
+>
+> Upload to YouTube or Loom and paste the link below:
+>
+> **[Demo Video Link](https://youtube.com/your-video-id)**
 
 ---
 

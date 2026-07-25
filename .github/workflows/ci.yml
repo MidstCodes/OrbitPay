@@ -103,7 +103,7 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: ${{ env.RUST_VERSION }}
-          target: wasm32-unknown-unknown
+          target: wasm32v1-none
 
       - name: Cache Cargo dependencies
         uses: actions/cache@v4
@@ -119,7 +119,7 @@ jobs:
       - name: Build contracts
         run: |
           cd contracts
-          cargo build --release --target wasm32-unknown-unknown 2>&1 | tail -5
+          CARGO_BUILD_TARGET=wasm32v1-none cargo build --release 2>&1 | tail -5
         continue-on-error: true
 
       - name: Run contract tests
@@ -197,9 +197,13 @@ jobs:
           NEXT_PUBLIC_HISTORY_CONTRACT_ADDRESS: ${{ secrets.HISTORY_CONTRACT_ADDRESS }}
 
       - name: Deploy to production
-        run: echo "Deploying to production... (configure your deployment target here)"
-        # TODO: Add actual deployment step (e.g., Vercel, Docker, etc.)
-        # For Vercel:
+        run: |
+          echo "Production deployment ready."
+          echo "Configure your deployment target in the steps below:"
+          echo "  - Vercel: use amondnet/vercel-action@v20"
+          echo "  - Docker: build and push to container registry"
+          echo "  - Custom server: copy .next/ to your server"
+        # To enable Vercel deployment, uncomment:
         # - uses: amondnet/vercel-action@v20
         #   with:
         #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
