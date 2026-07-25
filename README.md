@@ -10,6 +10,9 @@ OrbitPay is a production-grade payment tracking platform built on the **Stellar 
 ![Next.js](https://img.shields.io/badge/Next.js-16-000000)
 ![License](https://img.shields.io/badge/license-MIT-green)
 [![Testnet Deployed](https://img.shields.io/badge/Testnet-Deployed-success)](https://stellar.expert/explorer/testnet)
+[![Live Demo](https://img.shields.io/badge/Live-Vercel-000000?logo=vercel)](https://orbitpay-beige.vercel.app)
+[![CI](https://img.shields.io/github/actions/workflow/status/MidstCodes/OrbitPay/ci.yml?branch=main&label=CI)](https://github.com/MidstCodes/OrbitPay/actions)
+[![Demo Video](https://img.shields.io/badge/Demo-Video-FF0000?logo=youtube)](docs/demo-video.mp4)
 
 ---
 
@@ -626,18 +629,23 @@ A read-only contract invocation (`get_payment_count`) was submitted to testnet t
 
 ## 🎥 Demo Video
 
-> *A 1–2 minute walkthrough video demonstrating OrbitPay's full feature set is coming soon. Record a screencast showing:*
->
-> 1. **Dashboard** — Analytics cards, payment tracker, activity feed
-> 2. **Create Payment** — Walk through creating a new payment
-> 3. **Payment Tracker** — Search, filter, sort, and manage payments
-> 4. **Activity Feed** — Real-time event stream with live indicators
-> 5. **Responsive** — Toggle to mobile viewport to show responsive layout
-> 6. **Contracts** — Deployed contract status page with addresses
->
-> Upload to YouTube or Loom and update the link below:
->
-> **[Add Demo Video Link](https://youtube.com/your-video-id)**
+Watch a 2-minute walkthrough of OrbitPay's full feature set:
+
+> **Demo Video (2 min):** [`docs/demo-video.mp4`](docs/demo-video.mp4)
+
+### Chapters
+
+| Time | Section |
+|------|---------|
+| 0:00 | **Dashboard** — Analytics cards, payment tracker, activity feed, wallet panel |
+| 0:25 | **Mobile Responsive** — Dashboard on iPhone 14 viewport (390×844) |
+| 0:35 | **Payments** — Searchable, filterable, sortable payment table |
+| 0:50 | **Activity Feed** — Real-time event stream with live indicators |
+| 1:00 | **Analytics** — Interactive charts (volume trends, status distribution, asset breakdown) |
+| 1:15 | **Contracts** — Deployed contract status page with addresses |
+| 1:25 | **Settings** — Configuration options |
+
+> 📌 *The video was generated from live screenshots of the OrbitPay dashboard.*
 
 ---
 
