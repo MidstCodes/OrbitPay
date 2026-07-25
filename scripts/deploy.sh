@@ -3,13 +3,13 @@
 # OrbitPay Smart Contract Deployment Script
 # ============================================================================
 #
-# This script deploys OrbitPay's smart contracts to the Stellar network.
-# It supports testnet and mainnet deployments.
+# Uses the Stellar CLI (`stellar`) which replaced `soroban-cli`.
+# Supports testnet and mainnet deployments.
 #
 # Prerequisites:
 #   - Rust toolchain with wasm32v1-none target installed
-#   - soroban-cli installed (cargo install soroban-cli)
-#   - A funded Stellar account with secret key in SOROBAN_SECRET_KEY env var
+#   - stellar-cli installed (curl -fsSL https://github.com/stellar/stellar-cli/install.sh | sh)
+#   - A funded Stellar account (identity) with testnet XLM
 #
 # Usage:
 #   # Deploy to testnet (default)
@@ -18,8 +18,12 @@
 #   # Deploy to mainnet
 #   NETWORK=mainnet ./scripts/deploy.sh
 #
-#   # Dry run (just build, don't deploy)
-#   DRY_RUN=true ./scripts/deploy.sh
+#   # Use a specific identity
+#   STELLAR_ACCOUNT=alice ./scripts/deploy.sh
+#
+# Quick start (first time):
+#   stellar keys generate alice --network testnet --fund
+#   STELLAR_ACCOUNT=alice ./scripts/deploy.sh
 # ============================================================================
 
 set -euo pipefail
@@ -40,18 +44,10 @@ echo ""
 # Configuration
 # ============================================================================
 
-# Network selection
 NETWORK="${NETWORK:-testnet}"
-
-# Network configurations
-declare -A NETWORK_CONFIGS
-NETWORK_CONFIGS[testnet_rpc]="https://soroban-testnet.stellar.org"
-NETWORK_CONFIGS[testnet_passphrase]="Test SDF Network ; September 2015"
-NETWORK_CONFIGS[mainnet_rpc]="https://soroban.stellar.org"
-NETWORK_CONFIGS[mainnet_passphrase]="Public Global Stellar Network ; September 2015"
-
-RPC_URL="${NETWORK_CONFIGS[${NETWORK}_rpc]}"
-PASSPHRASE="${NETWORK_CONFIGS[${NETWORK}_passphrase]}"
+STELLAR_ACCOUNT="${STELLAR_ACCOUNT:-}"
+# Use SOROBAN_SECRET_KEY as fallback for backward compatibility
+SOROBAN_SECRET_KEY="${SOROBAN_SECRET_KEY:-}"
 
 # Contract paths
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -63,7 +59,6 @@ TARGET_DIR="$CONTRACTS_DIR/target/wasm32v1-none/release"
 CONTRACTS=("orbitpay-payment" "orbitpay-notification" "orbitpay-history")
 
 echo -e "${YELLOW}Network:${NC} $NETWORK"
-echo -e "${YELLOW}RPC URL:${NC} $RPC_URL"
 echo ""
 
 # ============================================================================
@@ -72,21 +67,48 @@ echo ""
 
 echo -e "${BLUE}[1/4] Checking prerequisites...${NC}"
 
-# Check for soroban CLI
-if ! command -v soroban &>/dev/null; then
-    echo -e "${YELLOW}soroban CLI not found. Installing...${NC}"
-    cargo install soroban-cli
+# Check for stellar CLI
+STELLAR_CMD=""
+if command -v stellar &>/dev/null; then
+    STELLAR_CMD="stellar"
+elif command -v soroban &>/dev/null; then
+    echo -e "${YELLOW}Note: 'soroban' CLI found but has been renamed to 'stellar'.${NC}"
+    echo -e "${YELLOW}Consider upgrading: curl -fsSL https://github.com/stellar/stellar-cli/install.sh | sh${NC}"
+    STELLAR_CMD="soroban"
+else
+    echo -e "${YELLOW}stellar CLI not found. Installing...${NC}"
+    echo -e "${YELLOW}  curl -fsSL https://github.com/stellar/stellar-cli/install.sh | sh${NC}"
+    echo ""
+    echo -e "${YELLOW}Or install via Cargo (~10 min):${NC}"
+    echo "  cargo install stellar-cli"
+    echo ""
+    echo -e "${RED}Please install stellar CLI and re-run this script.${NC}"
+    exit 1
 fi
 
-# Check for secret key
-if [ -z "${SOROBAN_SECRET_KEY:-}" ]; then
-    echo -e "${RED}Error: SOROBAN_SECRET_KEY environment variable is not set.${NC}"
-    echo "Set it to your Stellar account secret key:"
-    echo "  export SOROBAN_SECRET_KEY=SC... (replace with your actual key)"
+# Determine source: STELLAR_ACCOUNT > SOROBAN_SECRET_KEY > error
+SOURCE_FLAG=""
+if [ -n "$STELLAR_ACCOUNT" ]; then
+    SOURCE_FLAG="--source-account $STELLAR_ACCOUNT"
+    echo -e "  Using identity: ${GREEN}$STELLAR_ACCOUNT${NC}"
+elif [ -n "$SOROBAN_SECRET_KEY" ]; then
+    # For soroban CLI compatibility
+    if [ "$STELLAR_CMD" = "stellar" ]; then
+        echo -e "${YELLOW}Using SOROBAN_SECRET_KEY. For future runs, create an identity:${NC}"
+        echo "  stellar keys generate alice --network testnet --fund"
+        echo "  STELLAR_ACCOUNT=alice ./scripts/deploy.sh"
+    fi
+else
+    echo -e "${RED}Error: No account configured.${NC}"
+    echo "Set one of:"
     echo ""
-    echo "Or for testnet, generate a new keypair (add --global to persist):"
-    echo "  soroban keys generate --global --rpc-url \"$RPC_URL\" --network-passphrase \"$PASSPHRASE\""
-    echo "  export SOROBAN_SECRET_KEY=\$(soroban keys show)"
+    echo "  Option A: Generate an identity (recommended):"
+    echo "    stellar keys generate alice --network testnet --fund"
+    echo "    STELLAR_ACCOUNT=alice ./scripts/deploy.sh"
+    echo ""
+    echo "  Option B: Use a secret key (legacy):"
+    echo "    export SOROBAN_SECRET_KEY=SC..."
+    echo "    ./scripts/deploy.sh"
     exit 1
 fi
 
@@ -112,7 +134,7 @@ echo ""
 # ============================================================================
 # Deploy Contracts
 # ============================================================================
-# The `soroban contract deploy --wasm` command handles both
+# The `stellar contract deploy --wasm` command handles both
 # installing the WASM blob and creating the contract instance.
 
 echo -e "${BLUE}[3/4] Deploying contracts...${NC}"
@@ -122,21 +144,43 @@ declare -A CONTRACT_ADDRESSES
 for contract in "${CONTRACTS[@]}"; do
     wasm_name="${contract//-/_}"
     WASM_FILE="$TARGET_DIR/${wasm_name}.wasm"
-    
+
     if [ ! -f "$WASM_FILE" ]; then
         echo -e "${RED}Error: WASM file not found: $WASM_FILE${NC}"
         ls "$TARGET_DIR"/*.wasm 2>/dev/null || echo "  (no .wasm files in $TARGET_DIR)"
         exit 1
     fi
-    
+
     echo -e "  Deploying ${YELLOW}$contract${NC}..."
-    
-    DEPLOY_OUTPUT=$(soroban contract deploy \
-        --wasm "$WASM_FILE" \
-        --source "$SOROBAN_SECRET_KEY" \
-        --rpc-url "$RPC_URL" \
-        --network-passphrase "$PASSPHRASE" 2>&1)
-    
+
+    if [ "$STELLAR_CMD" = "stellar" ] && [ -n "$STELLAR_ACCOUNT" ]; then
+        # New stellar CLI with named identity (recommended)
+        DEPLOY_OUTPUT=$(stellar contract deploy \
+            --wasm "$WASM_FILE" \
+            --source-account "$STELLAR_ACCOUNT" \
+            --network "$NETWORK" 2>&1)
+    elif [ "$STELLAR_CMD" = "soroban" ] && [ -n "$SOROBAN_SECRET_KEY" ]; then
+        # Legacy soroban CLI with secret key
+        # Select correct RPC URL and passphrase based on network
+        if [ "$NETWORK" = "testnet" ]; then
+            SOROBAN_RPC="https://soroban-testnet.stellar.org"
+            SOROBAN_PASSPHRASE="Test SDF Network ; September 2015"
+        else
+            SOROBAN_RPC="https://soroban.stellar.org"
+            SOROBAN_PASSPHRASE="Public Global Stellar Network ; September 2015"
+        fi
+        DEPLOY_OUTPUT=$(soroban contract deploy \
+            --wasm "$WASM_FILE" \
+            --source "$SOROBAN_SECRET_KEY" \
+            --rpc-url "$SOROBAN_RPC" \
+            --network-passphrase "$SOROBAN_PASSPHRASE" 2>&1)
+    else
+        echo -e "${RED}No valid deployment method available.${NC}"
+        echo "  For stellar CLI: set STELLAR_ACCOUNT=<identity>"
+        echo "  For soroban CLI: set SOROBAN_SECRET_KEY=SC..."
+        exit 1
+    fi
+
     CONTRACT_ADDRESSES["$contract"]="$DEPLOY_OUTPUT"
     echo -e "    ${GREEN}Deployed:${NC} $DEPLOY_OUTPUT"
 done
@@ -184,4 +228,5 @@ done
 echo ""
 echo -e "${GREEN}╔══════════════════════════════════════════════════╗${NC}"
 echo -e "${GREEN}║          Deployment Complete!                    ║${NC}"
-echo -e "${GREEN}╚══════════════════════════════════════════════════╝${NC}"
+echo -e "${GREEN}╚══════════════════════════════════════════════════╝${NC}
+"

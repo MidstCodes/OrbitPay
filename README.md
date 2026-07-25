@@ -431,22 +431,25 @@ cd orbitpay
 npm install
 ```
 
-#### Step 2 — Install the Soroban CLI
+#### Step 2 — Install the Stellar CLI
 
-The Soroban CLI is required to deploy contracts. Install it via Cargo (~10 minutes):
+The Stellar CLI (`stellar`) is required to deploy contracts. It replaced the older `soroban-cli`. Install the pre-built binary (~30 seconds):
 
 ```bash
-source "$HOME/.cargo/env"  # if in a new terminal
-cargo install soroban-cli
-```
+# Quick install (recommended)
+curl -fsSL https://github.com/stellar/stellar-cli/install.sh | sh
 
-> **⏱ Why so long?** Cargo compiles the CLI from source. Subsequent installs use cached dependencies.
+# Or install via Cargo (~10 min)
+cargo install stellar-cli
+```
 
 Verify installation:
 ```bash
-soroban version
-# Expected: 21.x.x or later
+stellar version
+# Expected: 22.x.x or later
 ```
+
+> **Note:** If you have the older `soroban` CLI installed, the deploy script will still work with it, but upgrading to `stellar` is recommended.
 
 #### Step 3 — Add the WASM Target
 
@@ -458,27 +461,30 @@ rustup target list --installed | grep wasm32v1-none
 
 #### Step 4 — Set Up a Testnet Account
 
-You need a Stellar keypair funded with testnet XLM. Generate one:
+Create a Stellar identity (keypair) funded with testnet XLM:
 
 ```bash
-# Generate a new keypair and fund it via Friendbot
-soroban keys generate --rpc-url https://soroban-testnet.stellar.org \
-  --network-passphrase "Test SDF Network ; September 2015" \
-  --friendbot-url https://friendbot.stellar.org
+# Generate + fund in one step (recommended)
+stellar keys generate alice --network testnet --fund
 
-# Show the generated secret key
-export SOROBAN_SECRET_KEY=$(soroban keys show)
-echo "Secret key: $SOROBAN_SECRET_KEY"
+# Show the public key
+stellar keys address alice
+
+# Show the secret key
+stellar keys show alice
 ```
 
-Or use an existing keypair:
+This creates a named identity `alice` that you'll use for deployment. The `--fund` flag automatically requests testnet XLM from Friendbot.
+
+Then deploy using your identity:
 ```bash
-export SOROBAN_SECRET_KEY=SCXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+STELLAR_ACCOUNT=alice ./scripts/deploy.sh
 ```
 
-Fund the account via the Stellar Lab or Friendbot:
+If you prefer to use an existing keypair:
 ```bash
-curl -X GET "https://friendbot.stellar.org?addr=$(soroban keys address)"
+export SOROBAN_SECRET_KEY=SC...
+./scripts/deploy.sh
 ```
 
 #### Step 5 — Build the WASM Contracts
@@ -512,47 +518,49 @@ ls -la target/wasm32v1-none/release/*.wasm
 
 Now deploy the contracts to testnet. There are **three methods** — pick one:
 
-##### Option A: One-Liner with Soroban CLI (simplest)
-
-The Soroban CLI v21+ supports a combined `deploy` command that installs + creates in one step:
+##### Option A: One-Liner with Stellar CLI (simplest)
 
 ```bash
 cd contracts
 CARGO_BUILD_TARGET=wasm32v1-none cargo build --release
 
+cd ..
 for contract in orbitpay-payment orbitpay-notification orbitpay-history; do
   echo "Deploying $contract..."
-  soroban contract deploy \
-    --wasm target/wasm32v1-none/release/${contract//-/_}.wasm \
-    --source "$SOROBAN_SECRET_KEY" \
-    --rpc-url https://soroban-testnet.stellar.org \
-    --network-passphrase "Test SDF Network ; September 2015"
+  wasm_name="${contract//-/_}"
+  stellar contract deploy \
+    --wasm contracts/target/wasm32v1-none/release/${wasm_name}.wasm \
+    --source-account alice \
+    --network testnet
 done
 ```
 
-##### Option B: Bash Script (full workflow)
+##### Option B: Bash Script (recommended)
 
 ```bash
-cd ..  # back to project root
-export SOROBAN_SECRET_KEY=SC...  # if not already set
-./scripts/deploy.sh
+STELLAR_ACCOUNT=alice ./scripts/deploy.sh
 ```
 
 What `deploy.sh` does:
-1. ✅ Checks prerequisites (soroban CLI, secret key)
+1. ✅ Checks prerequisites (stellar CLI, identity)
 2. ✅ Builds all three contracts
-3. ✅ **Deploys** each contract using `soroban contract deploy --wasm` (handles install + create in one step)
+3. ✅ **Deploys** each contract using `stellar contract deploy --wasm`
 4. ✅ Prints contract addresses and Stellar Explorer links
+
+To use a secret key instead of a named identity:
+```bash
+export SOROBAN_SECRET_KEY=SC...
+./scripts/deploy.sh
+```
 
 ##### Option C: Node.js Script (auto-updates `.env.template`)
 
 ```bash
 cd ..
-export SOROBAN_SECRET_KEY=SC...
-node scripts/deploy-testnet.mjs
+SOROBAN_SECRET_KEY=SC... node scripts/deploy-testnet.mjs
 ```
 
-The Node.js script has the same two-step flow (install → deploy) but additionally **auto-writes** the deployed addresses into `.env.template`.
+The Node.js script uses `@stellar/stellar-sdk` directly and **auto-writes** the deployed addresses into `.env.template`.
 
 #### Step 7 — Update Environment Variables
 
@@ -600,11 +608,11 @@ Open [http://localhost:3000](http://localhost:3000), connect Freighter wallet, a
 
 | Problem | Solution |
 |---------|----------|
-| `soroban: command not found` | Run `source "$HOME/.cargo/env"` to add Cargo to PATH |
+| `stellar: command not found` | Install: `curl -fsSL https://github.com/stellar/stellar-cli/install.sh \| sh` |
 | `WASM file not found` | Verify the build target: `ls contracts/target/wasm32v1-none/release/*.wasm` |
-| `HostError: Error(WasmVm, InvalidAction)` | Soroban CLI / SDK version mismatch. Run `soroban version` and ensure the testnet supports it |
-| `Account not funded` | Fund via Friendbot: `curl https://friendbot.stellar.org?addr=<your-public-key>` |
-| `soroban keys generate` fails | Try `soroban keys generate --rpc-url https://soroban-testnet.stellar.org --network-passphrase "Test SDF Network ; September 2015"` |
+| `stellar contract deploy` fails | Check your identity exists: `stellar keys list`. Create one: `stellar keys generate alice --network testnet --fund` |
+| `Account not funded` | Fund manually: `curl https://friendbot.stellar.org?addr=$(stellar keys address alice)` |
+| `HostError: Error(WasmVm, InvalidAction)` | Update stellar CLI: `curl -fsSL https://github.com/stellar/stellar-cli/install.sh \| sh` |
 | `Transaction simulation failed` | The testnet RPC may be temporarily degraded. Wait and retry |
 
 ### Contract Addresses
