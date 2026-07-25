@@ -33,6 +33,9 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# Rust contract build artifacts (2.5GB)
+contracts/target/
+
 # demo video intermediate frames
 docs/video-frames/
 

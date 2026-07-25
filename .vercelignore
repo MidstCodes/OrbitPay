@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Rust contract build artifacts (2.5GB+)
+contracts/target/
+
+# Next.js build output
+.next/
+out/
+
+# Local environment files
+.env*
+!.env.example
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+
+# Git directory
+.git/
+
+# Screenshots and video intermediate files
+docs/video-frames/
+
+# TypeScript build info
+*.tsbuildinfo

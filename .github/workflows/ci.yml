@@ -169,6 +169,5 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Deploy to Vercel (Production)run: npx vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
-
- 
+      - name: Deploy to Vercel (Production)
+        run: npx vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
