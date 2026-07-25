@@ -47,8 +47,7 @@ export function useWallet(): WalletState {
       const walletInfo = await connectWallet();
       setWallet(walletInfo);
     } catch (err) {
-      const message =
-        err instanceof Error ? err.message : ERROR_MESSAGES.UNEXPECTED_ERROR;
+      const message = err instanceof Error ? err.message : ERROR_MESSAGES.UNEXPECTED_ERROR;
       setError(message);
       setWallet(null);
     } finally {

@@ -21,7 +21,7 @@ interface FreighterAPI {
   }>;
   signTransaction: (
     xdr: string,
-    opts?: { networkPassphrase?: string; network?: string }
+    opts?: { networkPassphrase?: string; network?: string },
   ) => Promise<string>;
 }
 
@@ -79,10 +79,7 @@ export async function connectWallet(): Promise<WalletInfo> {
 }
 
 /** Signs a transaction XDR using Freighter */
-export async function signTransactionXDR(
-  xdr: string,
-  networkPassphrase?: string
-): Promise<string> {
+export async function signTransactionXDR(xdr: string, networkPassphrase?: string): Promise<string> {
   const freighter = getFreighter();
   if (!freighter) {
     throw new Error('Freighter wallet is not installed');
@@ -105,18 +102,20 @@ export function getNetworkConfig(): NetworkConfig {
 /** Builds a Stellar.expert explorer URL for a transaction */
 export function buildExplorerUrl(txHash: string): string {
   const config = getConfig();
-  const explorer = config.network === 'testnet'
-    ? 'https://stellar.expert/explorer/testnet/tx'
-    : 'https://stellar.expert/explorer/public/tx';
+  const explorer =
+    config.network === 'testnet'
+      ? 'https://stellar.expert/explorer/testnet/tx'
+      : 'https://stellar.expert/explorer/public/tx';
   return `${explorer}/${txHash}`;
 }
 
 /** Builds a Stellar.explorer URL for an account */
 export function buildAccountExplorerUrl(address: string): string {
   const config = getConfig();
-  const explorer = config.network === 'testnet'
-    ? 'https://stellar.expert/explorer/testnet/account'
-    : 'https://stellar.expert/explorer/public/account';
+  const explorer =
+    config.network === 'testnet'
+      ? 'https://stellar.expert/explorer/testnet/account'
+      : 'https://stellar.expert/explorer/public/account';
   return `${explorer}/${address}`;
 }
 
@@ -141,7 +140,7 @@ export async function getAccountDetails(address: string): Promise<Record<string,
 /** Fetches recent transactions for an account */
 export async function getRecentTransactions(
   address: string,
-  limit = 20
+  limit = 20,
 ): Promise<Record<string, unknown>[]> {
   const config = getConfig();
   const url = `${config.horizonUrl}/accounts/${address}/transactions?limit=${limit}&order=desc`;

@@ -13,7 +13,12 @@ import { TransactionStateBadge } from '@/components/ui/StatusBadge';
 import { isValidStellarAddress, isValidAmount } from '@/lib/utils';
 
 interface CreatePaymentFormProps {
-  onSubmit: (data: { payee: string; amount: string; asset: string; metadata: string }) => Promise<void>;
+  onSubmit: (data: {
+    payee: string;
+    amount: string;
+    asset: string;
+    metadata: string;
+  }) => Promise<void>;
   onCancel: () => void;
   isCreating: boolean;
   transactionState: TransactionState;
@@ -66,7 +71,7 @@ export function CreatePaymentForm({
     <form onSubmit={handleSubmit} className="space-y-5">
       {/* Payee Address */}
       <div>
-        <label htmlFor="payee" className="block text-sm font-medium text-gray-700 mb-1.5">
+        <label htmlFor="payee" className="mb-1.5 block text-sm font-medium text-gray-700">
           Recipient Address
         </label>
         <input
@@ -81,17 +86,17 @@ export function CreatePaymentForm({
           aria-describedby={errors.payee ? 'payee-error' : undefined}
         />
         {errors.payee && (
-          <p id="payee-error" className="text-xs text-red-500 mt-1">{errors.payee}</p>
+          <p id="payee-error" className="mt-1 text-xs text-red-500">
+            {errors.payee}
+          </p>
         )}
-        <p className="text-xs text-gray-400 mt-1">
-          Stellar address starting with &quot;G&quot;
-        </p>
+        <p className="mt-1 text-xs text-gray-400">Stellar address starting with &quot;G&quot;</p>
       </div>
 
       {/* Amount + Asset */}
       <div className="grid grid-cols-3 gap-3">
         <div className="col-span-2">
-          <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1.5">
+          <label htmlFor="amount" className="mb-1.5 block text-sm font-medium text-gray-700">
             Amount
           </label>
           <input
@@ -106,11 +111,13 @@ export function CreatePaymentForm({
             aria-describedby={errors.amount ? 'amount-error' : undefined}
           />
           {errors.amount && (
-            <p id="amount-error" className="text-xs text-red-500 mt-1">{errors.amount}</p>
+            <p id="amount-error" className="mt-1 text-xs text-red-500">
+              {errors.amount}
+            </p>
           )}
         </div>
         <div>
-          <label htmlFor="asset" className="block text-sm font-medium text-gray-700 mb-1.5">
+          <label htmlFor="asset" className="mb-1.5 block text-sm font-medium text-gray-700">
             Asset
           </label>
           <select
@@ -121,7 +128,9 @@ export function CreatePaymentForm({
             disabled={isCreating}
           >
             {SUPPORTED_ASSETS.map((a) => (
-              <option key={a} value={a}>{a}</option>
+              <option key={a} value={a}>
+                {a}
+              </option>
             ))}
           </select>
         </div>
@@ -129,7 +138,7 @@ export function CreatePaymentForm({
 
       {/* Metadata */}
       <div>
-        <label htmlFor="metadata" className="block text-sm font-medium text-gray-700 mb-1.5">
+        <label htmlFor="metadata" className="mb-1.5 block text-sm font-medium text-gray-700">
           Description <span className="text-gray-400">(optional)</span>
         </label>
         <input
@@ -145,22 +154,27 @@ export function CreatePaymentForm({
 
       {/* Transaction State */}
       {isCreating && transactionState !== 'idle' && (
-        <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
-          <div className="flex items-center justify-between mb-2">
+        <div className="rounded-lg border border-blue-100 bg-blue-50 p-3">
+          <div className="mb-2 flex items-center justify-between">
             <span className="text-sm font-medium text-blue-700">Transaction Progress</span>
             <TransactionStateBadge state={transactionState} />
           </div>
-          <div className="w-full bg-blue-200 rounded-full h-1.5 overflow-hidden">
-            <div className="bg-blue-600 h-full rounded-full transition-all duration-500 animate-pulse"
-                 style={{
-                   width: transactionState === 'preparing' ? '25%'
-                     : transactionState === 'submitting' ? '50%'
-                     : transactionState === 'pending' ? '75%'
-                     : '100%'
-                 }}
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-blue-200">
+            <div
+              className="h-full animate-pulse rounded-full bg-blue-600 transition-all duration-500"
+              style={{
+                width:
+                  transactionState === 'preparing'
+                    ? '25%'
+                    : transactionState === 'submitting'
+                      ? '50%'
+                      : transactionState === 'pending'
+                        ? '75%'
+                        : '100%',
+              }}
             />
           </div>
-          <p className="text-xs text-blue-600 mt-2">
+          <p className="mt-2 text-xs text-blue-600">
             {transactionState === 'preparing' && 'Validating and preparing transaction...'}
             {transactionState === 'submitting' && 'Submitting to Stellar network...'}
             {transactionState === 'pending' && 'Waiting for network confirmation...'}
@@ -170,23 +184,14 @@ export function CreatePaymentForm({
       )}
 
       {/* Actions */}
-      <div className="flex justify-end gap-3 pt-2 border-t border-gray-100">
-        <button
-          type="button"
-          onClick={onCancel}
-          disabled={isCreating}
-          className="btn-secondary"
-        >
+      <div className="flex justify-end gap-3 border-t border-gray-100 pt-2">
+        <button type="button" onClick={onCancel} disabled={isCreating} className="btn-secondary">
           Cancel
         </button>
-        <button
-          type="submit"
-          disabled={isCreating}
-          className="btn-primary flex items-center gap-2"
-        >
+        <button type="submit" disabled={isCreating} className="btn-primary flex items-center gap-2">
           {isCreating ? (
             <>
-              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
               Processing...
             </>
           ) : (

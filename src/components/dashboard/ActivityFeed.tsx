@@ -38,20 +38,22 @@ function ActivityItemRow({ item }: { item: ActivityItem }) {
   const style = typeStyles[item.type] || typeStyles.payment_created;
 
   return (
-    <div className="flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors duration-100">
-      <div className={`flex-shrink-0 w-8 h-8 rounded-full ${style.bg} flex items-center justify-center`}>
+    <div className="flex items-start gap-3 px-4 py-3 transition-colors duration-100 hover:bg-gray-50">
+      <div
+        className={`h-8 w-8 flex-shrink-0 rounded-full ${style.bg} flex items-center justify-center`}
+      >
         <span className={`text-sm font-bold ${style.color}`}>{style.icon}</span>
       </div>
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <p className="text-sm text-gray-700">{item.message}</p>
-        <div className="flex items-center gap-2 mt-0.5">
+        <div className="mt-0.5 flex items-center gap-2">
           <span className="text-xs text-gray-400">{formatRelativeTime(item.timestamp)}</span>
           {item.explorerUrl && (
             <a
               href={item.explorerUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-blue-500 hover:text-blue-600 transition-colors"
+              className="text-xs text-blue-500 transition-colors hover:text-blue-600"
             >
               View tx →
             </a>
@@ -64,11 +66,11 @@ function ActivityItemRow({ item }: { item: ActivityItem }) {
 
 function ActivityItemSkeleton() {
   return (
-    <div className="flex items-start gap-3 px-4 py-3 animate-pulse">
-      <div className="w-8 h-8 rounded-full bg-gray-200" />
+    <div className="flex animate-pulse items-start gap-3 px-4 py-3">
+      <div className="h-8 w-8 rounded-full bg-gray-200" />
       <div className="flex-1 space-y-2">
-        <div className="h-4 bg-gray-200 rounded w-3/4" />
-        <div className="h-3 bg-gray-200 rounded w-1/4" />
+        <div className="h-4 w-3/4 rounded bg-gray-200" />
+        <div className="h-3 w-1/4 rounded bg-gray-200" />
       </div>
     </div>
   );
@@ -85,13 +87,13 @@ export function ActivityFeed({ activities, loading = false, onClear }: ActivityF
   }, [activities.length]);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+      <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
         <div className="flex items-center gap-2">
           <h3 className="text-sm font-semibold text-gray-900">Activity Feed</h3>
           {!loading && activities.length > 0 && (
-            <span className="px-1.5 py-0.5 text-xs font-medium text-blue-600 bg-blue-50 rounded-full">
+            <span className="rounded-full bg-blue-50 px-1.5 py-0.5 text-xs font-medium text-blue-600">
               {activities.length}
             </span>
           )}
@@ -99,7 +101,7 @@ export function ActivityFeed({ activities, loading = false, onClear }: ActivityF
         {onClear && activities.length > 0 && (
           <button
             onClick={onClear}
-            className="text-xs text-gray-400 hover:text-gray-600 transition-colors duration-150"
+            className="text-xs text-gray-400 transition-colors duration-150 hover:text-gray-600"
           >
             Clear all
           </button>
@@ -109,15 +111,13 @@ export function ActivityFeed({ activities, loading = false, onClear }: ActivityF
       {/* Feed */}
       <div
         ref={feedRef}
-        className="divide-y divide-gray-50 max-h-[400px] overflow-y-auto"
+        className="max-h-[400px] divide-y divide-gray-50 overflow-y-auto"
         role="log"
         aria-label="Activity feed"
         aria-live="polite"
       >
         {loading ? (
-          Array.from({ length: 5 }).map((_, i) => (
-            <ActivityItemSkeleton key={i} />
-          ))
+          Array.from({ length: 5 }).map((_, i) => <ActivityItemSkeleton key={i} />)
         ) : activities.length === 0 ? (
           <EmptyState
             variant="compact"
@@ -125,16 +125,14 @@ export function ActivityFeed({ activities, loading = false, onClear }: ActivityF
             description="Payment events will appear here"
           />
         ) : (
-          activities.map((item) => (
-            <ActivityItemRow key={item.id} item={item} />
-          ))
+          activities.map((item) => <ActivityItemRow key={item.id} item={item} />)
         )}
       </div>
 
       {/* Live indicator */}
       {!loading && activities.length > 0 && (
-        <div className="px-4 py-2 border-t border-gray-100 flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+        <div className="flex items-center gap-2 border-t border-gray-100 px-4 py-2">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
           <span className="text-xs text-gray-400">Live</span>
         </div>
       )}

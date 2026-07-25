@@ -68,7 +68,8 @@ export const ACCOUNT_EXPLORER_URL = 'https://stellar.expert/explorer/testnet/acc
 
 export const APP_NAME = 'OrbitPay';
 export const APP_TAGLINE = 'Decentralized Payment Tracking on Stellar';
-export const APP_DESCRIPTION = 'Monitor payment flows, interact with smart contracts, and manage transaction lifecycles on the Stellar network.';
+export const APP_DESCRIPTION =
+  'Monitor payment flows, interact with smart contracts, and manage transaction lifecycles on the Stellar network.';
 
 // ============================================================================
 // Asset Configuration
@@ -82,7 +83,8 @@ export type SupportedAsset = (typeof SUPPORTED_ASSETS)[number];
 // ============================================================================
 
 export const ERROR_MESSAGES = {
-  WALLET_UNAVAILABLE: 'Freighter wallet is not installed. Please install Freighter to use OrbitPay.',
+  WALLET_UNAVAILABLE:
+    'Freighter wallet is not installed. Please install Freighter to use OrbitPay.',
   WALLET_REJECTED: 'Wallet connection was rejected. Please try again.',
   INSUFFICIENT_BALANCE: 'Insufficient balance to complete this transaction.',
   NETWORK_FAILURE: 'Network connection failed. Please check your internet connection.',

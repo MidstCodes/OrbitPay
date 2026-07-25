@@ -119,7 +119,12 @@ export interface NetworkConfig {
 
 /** Real-time event from the Stellar network */
 export interface PaymentEvent {
-  type: 'payment_created' | 'payment_confirmed' | 'payment_cancelled' | 'notification_sent' | 'history_updated';
+  type:
+    | 'payment_created'
+    | 'payment_confirmed'
+    | 'payment_cancelled'
+    | 'notification_sent'
+    | 'history_updated';
   data: Record<string, unknown>;
   timestamp: number;
   txHash?: string;

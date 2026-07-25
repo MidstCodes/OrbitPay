@@ -16,12 +16,7 @@ interface SkeletonProps {
 }
 
 function Skeleton({ className = '' }: SkeletonProps) {
-  return (
-    <div
-      className={`animate-pulse rounded-md bg-gray-200 ${className}`}
-      aria-hidden="true"
-    />
-  );
+  return <div className={`animate-pulse rounded-md bg-gray-200 ${className}`} aria-hidden="true" />;
 }
 
 // ============================================================================
@@ -31,7 +26,7 @@ function Skeleton({ className = '' }: SkeletonProps) {
 export function CardSkeleton() {
   return (
     <div
-      className="bg-white rounded-xl border border-gray-200 p-6 space-y-4"
+      className="space-y-4 rounded-xl border border-gray-200 bg-white p-6"
       aria-label="Loading content"
     >
       <Skeleton className="h-4 w-1/3" />
@@ -54,7 +49,10 @@ export function TableRowSkeleton({ cols = 5 }: { cols?: number }) {
     <tr className="animate-pulse">
       {Array.from({ length: cols }).map((_, i) => (
         <td key={i} className="px-4 py-3">
-          <div className="h-4 bg-gray-200 rounded" style={{ width: `${60 + Math.random() * 30}%` }} />
+          <div
+            className="h-4 rounded bg-gray-200"
+            style={{ width: `${60 + Math.random() * 30}%` }}
+          />
         </td>
       ))}
     </tr>
@@ -69,9 +67,9 @@ export function DashboardSkeleton() {
   return (
     <div className="space-y-6" aria-label="Loading dashboard">
       {/* Stats cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="bg-white rounded-xl border border-gray-200 p-5 space-y-3">
+          <div key={i} className="space-y-3 rounded-xl border border-gray-200 bg-white p-5">
             <Skeleton className="h-4 w-20" />
             <Skeleton className="h-8 w-32" />
             <Skeleton className="h-3 w-24" />
@@ -80,8 +78,8 @@ export function DashboardSkeleton() {
       </div>
 
       {/* Main content area */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-6 lg:col-span-2">
           <Skeleton className="h-6 w-40" />
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-full" />
@@ -89,7 +87,7 @@ export function DashboardSkeleton() {
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-5/6" />
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-6">
           <Skeleton className="h-6 w-32" />
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-full" />
@@ -106,8 +104,8 @@ export function DashboardSkeleton() {
 
 export function PaymentListSkeleton() {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-100">
+    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+      <div className="border-b border-gray-100 px-6 py-4">
         <Skeleton className="h-6 w-32" />
       </div>
       <table className="w-full">

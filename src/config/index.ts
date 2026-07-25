@@ -36,7 +36,8 @@ export function loadConfig(): AppConfig {
       horizonUrl: process.env.NEXT_PUBLIC_HORIZON_URL || 'https://horizon.stellar.org',
       rpcUrl: process.env.NEXT_PUBLIC_RPC_URL || 'https://soroban.stellar.org',
       networkPassphrase:
-        process.env.NEXT_PUBLIC_NETWORK_PASSPHRASE || 'Public Global Stellar Network ; September 2015',
+        process.env.NEXT_PUBLIC_NETWORK_PASSPHRASE ||
+        'Public Global Stellar Network ; September 2015',
     },
   };
 

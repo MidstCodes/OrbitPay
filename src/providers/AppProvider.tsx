@@ -5,13 +5,7 @@
  * Provides toast notifications, event streaming, and shared state.
  */
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  ReactNode,
-} from 'react';
+import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { ToastMessage } from '@/types';
 import { useEvents } from '@/hooks/useEvents';
 import { generateId } from '@/lib/utils';
@@ -67,26 +61,23 @@ interface AppProviderProps {
 export function AppProvider({ children }: AppProviderProps) {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
-  const addToast = useCallback(
-    (toast: Omit<ToastMessage, 'id'> | ToastMessage) => {
-      const id = 'id' in toast ? toast.id : generateId();
-      const newToast: ToastMessage = {
-        ...toast,
-        id,
-        duration: toast.duration ?? 5000,
-      };
-      setToasts((prev) => [...prev, newToast]);
+  const addToast = useCallback((toast: Omit<ToastMessage, 'id'> | ToastMessage) => {
+    const id = 'id' in toast ? toast.id : generateId();
+    const newToast: ToastMessage = {
+      ...toast,
+      id,
+      duration: toast.duration ?? 5000,
+    };
+    setToasts((prev) => [...prev, newToast]);
 
-      // Auto-remove after duration
-      const toastDuration = newToast.duration ?? 5000;
-      if (toastDuration > 0) {
-        setTimeout(() => {
-          setToasts((prev) => prev.filter((t) => t.id !== id));
-        }, toastDuration);
-      }
-    },
-    []
-  );
+    // Auto-remove after duration
+    const toastDuration = newToast.duration ?? 5000;
+    if (toastDuration > 0) {
+      setTimeout(() => {
+        setToasts((prev) => prev.filter((t) => t.id !== id));
+      }, toastDuration);
+    }
+  }, []);
 
   const removeToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -100,28 +91,28 @@ export function AppProvider({ children }: AppProviderProps) {
     (title: string, message: string) => {
       addToast({ type: 'success', title, message });
     },
-    [addToast]
+    [addToast],
   );
 
   const error = useCallback(
     (title: string, message: string) => {
       addToast({ type: 'error', title, message });
     },
-    [addToast]
+    [addToast],
   );
 
   const info = useCallback(
     (title: string, message: string) => {
       addToast({ type: 'info', title, message });
     },
-    [addToast]
+    [addToast],
   );
 
   const warning = useCallback(
     (title: string, message: string) => {
       addToast({ type: 'warning', title, message });
     },
-    [addToast]
+    [addToast],
   );
 
   return (
@@ -138,10 +129,7 @@ export function AppProvider({ children }: AppProviderProps) {
       }}
     >
       {children}
-      <ToastContainer
-        toasts={toasts}
-        onRemove={removeToast}
-      />
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </ToastContext.Provider>
   );
 }

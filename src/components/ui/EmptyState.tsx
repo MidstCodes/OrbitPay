@@ -20,7 +20,7 @@ interface EmptyStateProps {
 
 const defaultIcon = (
   <svg
-    className="w-12 h-12 text-gray-300"
+    className="h-12 w-12 text-gray-300"
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -45,38 +45,28 @@ export function EmptyState({
   if (variant === 'compact') {
     return (
       <div
-        className="flex flex-col items-center justify-center py-8 px-4 text-center"
+        className="flex flex-col items-center justify-center px-4 py-8 text-center"
         role="status"
       >
-        <div className="text-gray-300 mb-2">
-          {icon || defaultIcon}
-        </div>
+        <div className="mb-2 text-gray-300">{icon || defaultIcon}</div>
         <p className="text-sm font-medium text-gray-500">{title}</p>
-        {description && (
-          <p className="text-xs text-gray-400 mt-1">{description}</p>
-        )}
+        {description && <p className="mt-1 text-xs text-gray-400">{description}</p>}
       </div>
     );
   }
 
   return (
     <div
-      className="flex flex-col items-center justify-center py-16 px-6 text-center bg-white rounded-xl border border-dashed border-gray-300"
+      className="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-white px-6 py-16 text-center"
       role="status"
     >
-      <div className="mb-4 text-gray-300">
-        {icon || defaultIcon}
-      </div>
-      <h3 className="text-lg font-semibold text-gray-700 mb-1">{title}</h3>
-      {description && (
-        <p className="text-sm text-gray-500 mb-4 max-w-md">{description}</p>
-      )}
+      <div className="mb-4 text-gray-300">{icon || defaultIcon}</div>
+      <h3 className="mb-1 text-lg font-semibold text-gray-700">{title}</h3>
+      {description && <p className="mb-4 max-w-md text-sm text-gray-500">{description}</p>}
       {action && (
         <button
           onClick={action.onClick}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium
-                     hover:bg-blue-700 transition-colors duration-200
-                     focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
         >
           {action.label}
         </button>

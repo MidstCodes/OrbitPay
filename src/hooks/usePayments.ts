@@ -6,12 +6,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import {
-  Payment,
-  CreatePaymentRequest,
-  TransactionState,
-  ToastMessage,
-} from '@/types';
+import { Payment, CreatePaymentRequest, TransactionState, ToastMessage } from '@/types';
 import {
   initiatePayment,
   initiateConfirmPayment,
@@ -44,7 +39,7 @@ interface PaymentState {
  */
 export function usePayments(
   address: string | null,
-  role: 'payer' | 'payee' = 'payer'
+  role: 'payer' | 'payee' = 'payer',
 ): PaymentState {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [total, setTotal] = useState(0);
@@ -143,7 +138,7 @@ export function usePayments(
         }
       }
     },
-    [address, loadPayments, addToast]
+    [address, loadPayments, addToast],
   );
 
   const confirmPayment = useCallback(
@@ -180,7 +175,7 @@ export function usePayments(
         if (mountedRef.current) setTransactionState('idle');
       }
     },
-    [loadPayments, addToast]
+    [loadPayments, addToast],
   );
 
   const cancelPayment = useCallback(
@@ -217,7 +212,7 @@ export function usePayments(
         if (mountedRef.current) setTransactionState('idle');
       }
     },
-    [loadPayments, addToast]
+    [loadPayments, addToast],
   );
 
   const refresh = useCallback(async () => {

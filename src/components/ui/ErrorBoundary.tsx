@@ -47,12 +47,12 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
       return (
         <div
-          className="flex flex-col items-center justify-center p-8 bg-white rounded-xl border border-red-200 text-center"
+          className="flex flex-col items-center justify-center rounded-xl border border-red-200 bg-white p-8 text-center"
           role="alert"
         >
-          <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-4">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
             <svg
-              className="w-8 h-8 text-red-500"
+              className="h-8 w-8 text-red-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -66,31 +66,25 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-1">
-            Something went wrong
-          </h3>
-          <p className="text-sm text-gray-500 mb-4 max-w-md">
+          <h3 className="mb-1 text-lg font-semibold text-gray-900">Something went wrong</h3>
+          <p className="mb-4 max-w-md text-sm text-gray-500">
             An unexpected error occurred. Please try refreshing the page.
           </p>
           {process.env.NODE_ENV === 'development' && this.state.error && (
-            <pre className="text-xs text-red-600 bg-red-50 p-3 rounded-lg mb-4 max-w-full overflow-auto">
+            <pre className="mb-4 max-w-full overflow-auto rounded-lg bg-red-50 p-3 text-xs text-red-600">
               {this.state.error.message}
             </pre>
           )}
           <div className="flex gap-3">
             <button
               onClick={this.handleRetry}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium
-                         hover:bg-blue-700 transition-colors duration-200
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
             >
               Try Again
             </button>
             <button
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium
-                         hover:bg-gray-200 transition-colors duration-200
-                         focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
+              className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 focus:outline-none"
             >
               Refresh Page
             </button>

@@ -57,14 +57,15 @@ export function useEvents(): EventState & {
       if ('amount' in event.data) {
         const activity: ActivityItem = {
           id: generateId(),
-          type: event.type === 'payment_created'
-            ? 'payment_created'
-            : event.type === 'payment_confirmed'
-            ? 'payment_confirmed'
-            : 'payment_cancelled',
+          type:
+            event.type === 'payment_created'
+              ? 'payment_created'
+              : event.type === 'payment_confirmed'
+                ? 'payment_confirmed'
+                : 'payment_cancelled',
           message: `Payment ${event.type.replace('payment_', '')}: ${JSON.stringify(event.data)}`,
           timestamp: event.timestamp,
-          paymentId: (event.data as Record<string, unknown>).id as number || 0,
+          paymentId: ((event.data as Record<string, unknown>).id as number) || 0,
         };
         setActivities((prev) => [activity, ...prev].slice(0, 50));
       }

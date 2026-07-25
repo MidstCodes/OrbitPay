@@ -6,16 +6,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import {
-  TransactionLifecycle,
-  TransactionState,
-  Payment,
-} from '@/types';
-import {
-  getTransaction,
-  onTransactionUpdate,
-  getAllTransactions,
-} from '@/services/payments';
+import { TransactionLifecycle, TransactionState, Payment } from '@/types';
+import { getTransaction, onTransactionUpdate, getAllTransactions } from '@/services/payments';
 
 interface TransactionStateHook {
   currentTx: TransactionLifecycle | null;

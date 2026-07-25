@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* ==========================================================================
    OrbitPay Global Styles
@@ -6,8 +6,9 @@
 
 @layer base {
   :root {
-    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-      'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+    --font-sans:
+      system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+      'Noto Sans', sans-serif;
   }
 
   * {
@@ -57,11 +58,11 @@
 @layer components {
   /* Card component */
   .card {
-    @apply bg-white rounded-xl border border-gray-200 shadow-sm;
+    @apply rounded-xl border border-gray-200 bg-white shadow-sm;
   }
 
   .card-header {
-    @apply px-6 py-4 border-b border-gray-100;
+    @apply border-b border-gray-100 px-6 py-4;
   }
 
   .card-body {
@@ -70,41 +71,30 @@
 
   /* Button variants */
   .btn-primary {
-    @apply px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium
-           hover:bg-blue-700 active:bg-blue-800
-           disabled:opacity-50 disabled:cursor-not-allowed
-           transition-all duration-150 shadow-sm;
+    @apply rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-150 hover:bg-blue-700 active:bg-blue-800 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-secondary {
-    @apply px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium
-           hover:bg-gray-200 active:bg-gray-300
-           disabled:opacity-50 disabled:cursor-not-allowed
-           transition-all duration-150;
+    @apply rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 transition-all duration-150 hover:bg-gray-200 active:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-ghost {
-    @apply px-3 py-1.5 text-gray-600 rounded-lg text-sm font-medium
-           hover:bg-gray-100 active:bg-gray-200
-           transition-all duration-150;
+    @apply rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 transition-all duration-150 hover:bg-gray-100 active:bg-gray-200;
   }
 
   /* Input component */
   .input-field {
-    @apply w-full px-3 py-2 bg-white border border-gray-200 rounded-lg
-           text-sm text-gray-700 placeholder-gray-400
-           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
-           transition-all duration-150;
+    @apply w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 placeholder-gray-400 transition-all duration-150 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none;
   }
 
   /* Badge component */
   .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
   }
 
   /* Gradient text */
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600;
+    @apply bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent;
   }
 }
 
@@ -124,7 +114,7 @@
 
   /* Glass effect */
   .glass {
-    @apply bg-white/80 backdrop-blur-lg border border-white/20;
+    @apply border border-white/20 bg-white/80 backdrop-blur-lg;
   }
 }
 

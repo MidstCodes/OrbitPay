@@ -60,7 +60,7 @@ export function Modal({
     (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     },
-    [onClose]
+    [onClose],
   );
 
   useEffect(() => {
@@ -83,31 +83,27 @@ export function Modal({
       aria-labelledby="modal-title"
     >
       <div
-        className={`
-          bg-white rounded-2xl shadow-2xl w-full ${sizeClasses[size]}
-          transition-all duration-200 ease-out
-          ${isVisible ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-4'}
-        `}
+        className={`w-full rounded-2xl bg-white shadow-2xl ${sizeClasses[size]} transition-all duration-200 ease-out ${isVisible ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-4 scale-95 opacity-0'} `}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2
-            id="modal-title"
-            className="text-lg font-semibold text-gray-900"
-          >
+        <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+          <h2 id="modal-title" className="text-lg font-semibold text-gray-900">
             {title}
           </h2>
           {showCloseButton && (
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-lg flex items-center justify-center
-                         text-gray-400 hover:text-gray-600 hover:bg-gray-100
-                         transition-colors duration-150"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition-colors duration-150 hover:bg-gray-100 hover:text-gray-600"
               aria-label="Close modal"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           )}

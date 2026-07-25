@@ -43,7 +43,9 @@ describe('truncateHash', () => {
 
 describe('isValidStellarAddress', () => {
   it('should validate a correct Stellar address', () => {
-    expect(isValidStellarAddress('GA7QYNF7SOWQ3GLR2BGMZKJXHOI2MKR2H2GEVXJ7Y6WVTW6C2C4Z6W6X')).toBe(true);
+    expect(isValidStellarAddress('GA7QYNF7SOWQ3GLR2BGMZKJXHOI2MKR2H2GEVXJ7Y6WVTW6C2C4Z6W6X')).toBe(
+      true,
+    );
   });
 
   it('should reject an invalid Stellar address', () => {
@@ -51,7 +53,9 @@ describe('isValidStellarAddress', () => {
   });
 
   it('should reject a lowercase address', () => {
-    expect(isValidStellarAddress('ga7qynf7sowq3glr2bgmzkjxhoi2mkr2h2gevxj7y6wvtw6c2c4z6w6x')).toBe(false);
+    expect(isValidStellarAddress('ga7qynf7sowq3glr2bgmzkjxhoi2mkr2h2gevxj7y6wvtw6c2c4z6w6x')).toBe(
+      false,
+    );
   });
 
   it('should reject an empty string', () => {

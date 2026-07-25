@@ -31,19 +31,10 @@ const statusIcons: Record<string, string> = {
   Cancelled: '✕',
 };
 
-export function StatusBadge({
-  status,
-  size = 'md',
-  showIcon = true,
-}: StatusBadgeProps) {
+export function StatusBadge({ status, size = 'md', showIcon = true }: StatusBadgeProps) {
   return (
     <span
-      className={`
-        inline-flex items-center gap-1.5 rounded-full font-medium border
-        transition-colors duration-200
-        ${getStatusColor(status)}
-        ${sizeClasses[size]}
-      `}
+      className={`inline-flex items-center gap-1.5 rounded-full border font-medium transition-colors duration-200 ${getStatusColor(status)} ${sizeClasses[size]} `}
       role="status"
       aria-label={`Status: ${getStatusLabel(status)}`}
     >
@@ -94,17 +85,12 @@ const stateColors: Record<string, string> = {
 export function TransactionStateBadge({ state }: TransactionStateBadgeProps) {
   return (
     <span
-      className={`
-        inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full
-        text-xs font-medium border
-        transition-colors duration-200
-        ${stateColors[state] || stateColors.idle}
-      `}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors duration-200 ${stateColors[state] || stateColors.idle} `}
       role="status"
       aria-label={`Transaction state: ${stateLabels[state] || state}`}
     >
       {state === 'submitting' || state === 'pending' ? (
-        <span className="w-2 h-2 rounded-full bg-current animate-pulse" aria-hidden="true" />
+        <span className="h-2 w-2 animate-pulse rounded-full bg-current" aria-hidden="true" />
       ) : null}
       {stateLabels[state] || state}
     </span>

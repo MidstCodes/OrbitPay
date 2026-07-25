@@ -16,9 +16,9 @@ const footerLinks = [
 
 export function Footer() {
   return (
-    <footer className="bg-white border-t border-gray-200 mt-auto">
+    <footer className="mt-auto border-t border-gray-200 bg-white">
       <div className="px-6 py-4">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="flex flex-col items-center justify-between gap-3 sm:flex-row">
           {/* Copyright */}
           <p className="text-xs text-gray-400">
             &copy; {new Date().getFullYear()} OrbitPay. Built on{' '}
@@ -26,7 +26,7 @@ export function Footer() {
               href="https://stellar.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-700 transition-colors"
+              className="text-blue-600 transition-colors hover:text-blue-700"
             >
               Stellar
             </a>
@@ -40,7 +40,7 @@ export function Footer() {
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs text-gray-400 hover:text-gray-600 transition-colors duration-150"
+                className="text-xs text-gray-400 transition-colors duration-150 hover:text-gray-600"
               >
                 {link.label}
               </a>

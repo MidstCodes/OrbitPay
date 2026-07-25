@@ -153,11 +153,7 @@ export function generateId(): string {
 // ============================================================================
 
 /** Filters an array of items by a search query across specified keys */
-export function filterByQuery<T>(
-  items: T[],
-  query: string,
-  keys: (keyof T)[]
-): T[] {
+export function filterByQuery<T>(items: T[], query: string, keys: (keyof T)[]): T[] {
   const lowerQuery = query.toLowerCase().trim();
   if (!lowerQuery) return items;
 
@@ -165,16 +161,12 @@ export function filterByQuery<T>(
     keys.some((key) => {
       const value = item[key];
       return String(value).toLowerCase().includes(lowerQuery);
-    })
+    }),
   );
 }
 
 /** Sorts an array by a specified key */
-export function sortByKey<T>(
-  items: T[],
-  key: keyof T,
-  direction: 'asc' | 'desc' = 'desc'
-): T[] {
+export function sortByKey<T>(items: T[], key: keyof T, direction: 'asc' | 'desc' = 'desc'): T[] {
   return [...items].sort((a, b) => {
     const aVal = a[key];
     const bVal = b[key];

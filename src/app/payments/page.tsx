@@ -33,20 +33,20 @@ export default function PaymentsPage() {
       const txId = await createPayment(data);
       if (txId) setShowCreateModal(false);
     },
-    [createPayment]
+    [createPayment],
   );
 
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex flex-1 flex-col overflow-hidden">
         <Navbar onMenuToggle={() => setSidebarOpen(!sidebarOpen)} isSidebarOpen={sidebarOpen} />
         <main className="flex-1 overflow-y-auto">
-          <div className="px-4 lg:px-6 py-6 space-y-6 max-w-7xl mx-auto">
+          <div className="mx-auto max-w-7xl space-y-6 px-4 py-6 lg:px-6">
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">Payments</h1>
-                <p className="text-sm text-gray-500 mt-1">Manage and track all your payments</p>
+                <p className="mt-1 text-sm text-gray-500">Manage and track all your payments</p>
               </div>
             </div>
             <ErrorBoundary>
@@ -65,7 +65,12 @@ export default function PaymentsPage() {
         </main>
         <Footer />
       </div>
-      <Modal isOpen={showCreateModal} onClose={() => setShowCreateModal(false)} title="Create Payment" size="lg">
+      <Modal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        title="Create Payment"
+        size="lg"
+      >
         <CreatePaymentForm
           onSubmit={handleCreatePayment}
           onCancel={() => setShowCreateModal(false)}

@@ -84,8 +84,8 @@ export function PaymentTracker({
   };
 
   const SortIcon = ({ field }: { field: SortField }) => {
-    if (sortField !== field) return <span className="text-gray-300 ml-1">↕</span>;
-    return <span className="text-blue-600 ml-1">{sortDirection === 'asc' ? '↑' : '↓'}</span>;
+    if (sortField !== field) return <span className="ml-1 text-gray-300">↕</span>;
+    return <span className="ml-1 text-blue-600">{sortDirection === 'asc' ? '↑' : '↓'}</span>;
   };
 
   if (loading) {
@@ -94,13 +94,12 @@ export function PaymentTracker({
 
   if (error) {
     return (
-      <div className="bg-white rounded-xl border border-red-200 p-6 text-center" role="alert">
-        <p className="text-red-600 font-medium mb-2">Failed to load payments</p>
-        <p className="text-sm text-red-500 mb-4">{error}</p>
+      <div className="rounded-xl border border-red-200 bg-white p-6 text-center" role="alert">
+        <p className="mb-2 font-medium text-red-600">Failed to load payments</p>
+        <p className="mb-4 text-sm text-red-500">{error}</p>
         <button
           onClick={onRefresh}
-          className="px-4 py-2 bg-red-50 text-red-700 rounded-lg text-sm font-medium
-                     hover:bg-red-100 transition-colors duration-150"
+          className="rounded-lg bg-red-50 px-4 py-2 text-sm font-medium text-red-700 transition-colors duration-150 hover:bg-red-100"
         >
           Try Again
         </button>
@@ -109,28 +108,30 @@ export function PaymentTracker({
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-gray-100">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <div className="border-b border-gray-100 px-6 py-4">
+        <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
           <h2 className="text-lg font-semibold text-gray-900">Payments</h2>
           <div className="flex items-center gap-2">
             <button
               onClick={onRefresh}
-              className="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100
-                         transition-colors duration-150"
+              className="rounded-lg p-2 text-gray-400 transition-colors duration-150 hover:bg-gray-100 hover:text-gray-600"
               aria-label="Refresh payments"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
               </svg>
             </button>
             <button
               onClick={onCreateClick}
               disabled={!isConnected}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium
-                         hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed
-                         transition-colors duration-150 shadow-sm"
+              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors duration-150 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               + New Payment
             </button>
@@ -138,22 +139,27 @@ export function PaymentTracker({
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-3 mt-4">
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
           <div className="relative flex-1">
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
-              fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
             </svg>
             <input
               type="search"
               placeholder="Search by ID, address, or metadata..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg
-                         text-sm text-gray-700 placeholder-gray-400
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full rounded-lg border border-gray-200 bg-gray-50 py-2 pr-4 pl-10 text-sm text-gray-700 placeholder-gray-400 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
           <div className="flex gap-2">
@@ -161,11 +167,11 @@ export function PaymentTracker({
               <button
                 key={status}
                 onClick={() => setStatusFilter(status)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors duration-150
-                  ${statusFilter === status
-                    ? 'bg-blue-100 text-blue-700 border border-blue-200'
-                    : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100'
-                  }`}
+                className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors duration-150 ${
+                  statusFilter === status
+                    ? 'border border-blue-200 bg-blue-100 text-blue-700'
+                    : 'border border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100'
+                }`}
               >
                 {status}
               </button>
@@ -182,8 +188,8 @@ export function PaymentTracker({
             searchQuery || statusFilter !== 'All'
               ? 'Try adjusting your search or filters'
               : isConnected
-              ? 'Create your first payment to get started'
-              : 'Connect your wallet to view and create payments'
+                ? 'Create your first payment to get started'
+                : 'Connect your wallet to view and create payments'
           }
           action={
             isConnected && !searchQuery && statusFilter === 'All'
@@ -197,58 +203,54 @@ export function PaymentTracker({
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50/50">
                 <th
-                  className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700"
+                  className="cursor-pointer px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase hover:text-gray-700"
                   onClick={() => handleSort('id')}
                 >
                   ID <SortIcon field="id" />
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Payer / Payee
                 </th>
                 <th
-                  className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700"
+                  className="cursor-pointer px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase hover:text-gray-700"
                   onClick={() => handleSort('amount')}
                 >
                   Amount <SortIcon field="amount" />
                 </th>
                 <th
-                  className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700"
+                  className="cursor-pointer px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase hover:text-gray-700"
                   onClick={() => handleSort('status')}
                 >
                   Status <SortIcon field="status" />
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Metadata
                 </th>
                 <th
-                  className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700"
+                  className="cursor-pointer px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase hover:text-gray-700"
                   onClick={() => handleSort('created_at')}
                 >
                   Date <SortIcon field="created_at" />
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-4 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Actions
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {filteredPayments.map((payment) => (
-                <tr
-                  key={payment.id}
-                  className="hover:bg-gray-50/50 transition-colors duration-100"
-                >
+                <tr key={payment.id} className="transition-colors duration-100 hover:bg-gray-50/50">
                   <td className="px-4 py-3">
-                    <span className="text-sm font-mono text-gray-900">#{payment.id}</span>
+                    <span className="font-mono text-sm text-gray-900">#{payment.id}</span>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-col gap-0.5">
                       <button
                         onClick={() => handleCopy(payment.payee)}
-                        className="text-sm font-mono text-gray-600 hover:text-blue-600 text-left
-                                   transition-colors duration-150 group"
+                        className="group text-left font-mono text-sm text-gray-600 transition-colors duration-150 hover:text-blue-600"
                       >
                         {truncateAddress(payment.payee)}
-                        <span className="ml-1 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="ml-1 text-xs text-gray-400 opacity-0 transition-opacity group-hover:opacity-100">
                           {copiedId === payment.payee ? 'Copied!' : 'Copy'}
                         </span>
                       </button>
@@ -263,12 +265,15 @@ export function PaymentTracker({
                     <StatusBadge status={payment.status} size="sm" />
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-sm text-gray-500 max-w-[150px] truncate block">
+                    <span className="block max-w-[150px] truncate text-sm text-gray-500">
                       {payment.metadata || '—'}
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-sm text-gray-500" title={new Date(payment.created_at * 1000).toLocaleString()}>
+                    <span
+                      className="text-sm text-gray-500"
+                      title={new Date(payment.created_at * 1000).toLocaleString()}
+                    >
                       {formatRelativeTime(payment.created_at)}
                     </span>
                   </td>
@@ -278,16 +283,14 @@ export function PaymentTracker({
                         <>
                           <button
                             onClick={() => onConfirm(payment.id)}
-                            className="px-2.5 py-1.5 text-xs font-medium text-emerald-700 bg-emerald-50
-                                       rounded-lg hover:bg-emerald-100 transition-colors duration-150"
+                            className="rounded-lg bg-emerald-50 px-2.5 py-1.5 text-xs font-medium text-emerald-700 transition-colors duration-150 hover:bg-emerald-100"
                             title="Confirm payment"
                           >
                             Confirm
                           </button>
                           <button
                             onClick={() => onCancel(payment.id)}
-                            className="px-2.5 py-1.5 text-xs font-medium text-red-700 bg-red-50
-                                       rounded-lg hover:bg-red-100 transition-colors duration-150"
+                            className="rounded-lg bg-red-50 px-2.5 py-1.5 text-xs font-medium text-red-700 transition-colors duration-150 hover:bg-red-100"
                             title="Cancel payment"
                           >
                             Cancel
@@ -295,7 +298,7 @@ export function PaymentTracker({
                         </>
                       )}
                       {payment.status === 'Confirmed' && (
-                        <span className="text-xs text-emerald-600 font-medium">Completed</span>
+                        <span className="text-xs font-medium text-emerald-600">Completed</span>
                       )}
                       {payment.status === 'Cancelled' && (
                         <span className="text-xs text-gray-400">—</span>
@@ -310,7 +313,7 @@ export function PaymentTracker({
       )}
 
       {/* Footer */}
-      <div className="px-6 py-3 border-t border-gray-100 flex items-center justify-between">
+      <div className="flex items-center justify-between border-t border-gray-100 px-6 py-3">
         <p className="text-xs text-gray-400">
           Showing {filteredPayments.length} of {payments.length} payments
         </p>
@@ -318,7 +321,7 @@ export function PaymentTracker({
           href="https://stellar.expert/explorer/testnet"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs text-blue-600 hover:text-blue-700 transition-colors"
+          className="text-xs text-blue-600 transition-colors hover:text-blue-700"
         >
           View on Stellar Explorer →
         </a>
