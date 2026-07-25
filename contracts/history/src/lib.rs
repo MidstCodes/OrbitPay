@@ -105,7 +105,7 @@ mod tests {
     #[test]
     fn test_record_history() {
         let env = Env::default();
-        let contract_id = env.register_contract(None, HistoryContract);
+        let contract_id = env.register(HistoryContract, ());
         env.mock_all_auths();
 
         env.as_contract(&contract_id, || {
@@ -122,7 +122,7 @@ mod tests {
     #[test]
     fn test_get_history_pagination() {
         let env = Env::default();
-        let contract_id = env.register_contract(None, HistoryContract);
+        let contract_id = env.register(HistoryContract, ());
         let payer = Address::generate(&env);
         let payee = Address::generate(&env);
         env.mock_all_auths();
@@ -143,7 +143,7 @@ mod tests {
     #[test]
     fn test_get_entry() {
         let env = Env::default();
-        let contract_id = env.register_contract(None, HistoryContract);
+        let contract_id = env.register(HistoryContract, ());
         env.mock_all_auths();
 
         env.as_contract(&contract_id, || {

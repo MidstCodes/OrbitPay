@@ -133,7 +133,7 @@ mod tests {
     #[test]
     fn test_create_notification() {
         let env = Env::default();
-        let contract_id = env.register_contract(None, NotificationContract);
+        let contract_id = env.register(NotificationContract, ());
         let recipient = Address::generate(&env);
 
         env.as_contract(&contract_id, || {
@@ -150,7 +150,7 @@ mod tests {
     #[test]
     fn test_unread_count() {
         let env = Env::default();
-        let contract_id = env.register_contract(None, NotificationContract);
+        let contract_id = env.register(NotificationContract, ());
         let recipient = Address::generate(&env);
 
         env.as_contract(&contract_id, || {
@@ -169,7 +169,7 @@ mod tests {
     fn test_clear_notifications() {
         let env = Env::default();
         env.mock_all_auths();
-        let contract_id = env.register_contract(None, NotificationContract);
+        let contract_id = env.register(NotificationContract, ());
         let recipient = Address::generate(&env);
 
         env.as_contract(&contract_id, || {

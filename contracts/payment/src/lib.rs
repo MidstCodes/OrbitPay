@@ -241,7 +241,7 @@ mod tests {
     fn test_create_payment() {
         let env = Env::default();
         env.mock_all_auths();
-        let contract_id = env.register_contract(None, OrbitPayContract);
+        let contract_id = env.register(OrbitPayContract, ());
         let payer = Address::generate(&env);
         let payee = Address::generate(&env);
 
@@ -263,7 +263,7 @@ mod tests {
     fn test_confirm_payment() {
         let env = Env::default();
         env.mock_all_auths();
-        let contract_id = env.register_contract(None, OrbitPayContract);
+        let contract_id = env.register(OrbitPayContract, ());
         let payer = Address::generate(&env);
         let payee = Address::generate(&env);
 
@@ -279,7 +279,7 @@ mod tests {
     fn test_cancel_payment() {
         let env = Env::default();
         env.mock_all_auths();
-        let contract_id = env.register_contract(None, OrbitPayContract);
+        let contract_id = env.register(OrbitPayContract, ());
         let payer = Address::generate(&env);
         let payee = Address::generate(&env);
 
@@ -302,7 +302,7 @@ mod tests {
     fn test_create_payment_zero_amount() {
         let env = Env::default();
         env.mock_all_auths();
-        let contract_id = env.register_contract(None, OrbitPayContract);
+        let contract_id = env.register(OrbitPayContract, ());
 
         env.as_contract(&contract_id, || {
             OrbitPayContract::create_payment(env.clone(), Address::generate(&env), Address::generate(&env), 0,
@@ -314,7 +314,7 @@ mod tests {
     fn test_set_contract_addresses() {
         let env = Env::default();
         env.mock_all_auths();
-        let contract_id = env.register_contract(None, OrbitPayContract);
+        let contract_id = env.register(OrbitPayContract, ());
 
         env.as_contract(&contract_id, || {
             OrbitPayContract::set_notification_contract(env.clone(), Address::generate(&env));
@@ -329,7 +329,7 @@ mod tests {
     fn test_get_payment_count() {
         let env = Env::default();
         env.mock_all_auths();
-        let contract_id = env.register_contract(None, OrbitPayContract);
+        let contract_id = env.register(OrbitPayContract, ());
 
         env.as_contract(&contract_id, || {
             for i in 0..3 {
