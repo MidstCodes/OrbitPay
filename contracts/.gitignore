@@ -1,0 +1,9 @@
+# Build artifacts
+target/
+*.wasm
+
+# Test snapshots
+test_snapshots/
+
+# Lock file (workspace root handles this)
+Cargo.lock
