@@ -1,4 +1,4 @@
-# Build artifacts
+# Rust build artifacts
 target/
 *.wasm
 

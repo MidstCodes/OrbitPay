@@ -9,6 +9,7 @@ OrbitPay is a production-grade payment tracking platform built on the **Stellar 
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6)
 ![Next.js](https://img.shields.io/badge/Next.js-16-000000)
 ![License](https://img.shields.io/badge/license-MIT-green)
+[![Testnet Deployed](https://img.shields.io/badge/Testnet-Deployed-success)](https://stellar.expert/explorer/testnet)
 
 ---
 
@@ -332,9 +333,9 @@ The demo runs in **simulation mode** — no Freighter wallet or deployed contrac
 | `NEXT_PUBLIC_NETWORK_PASSPHRASE` | Network passphrase | Testnet passphrase |
 | `NEXT_PUBLIC_HORIZON_URL` | Horizon API URL | Testnet Horizon |
 | `NEXT_PUBLIC_RPC_URL` | Soroban RPC URL | Testnet RPC |
-| `NEXT_PUBLIC_PAYMENT_CONTRACT_ADDRESS` | Deployed Payment contract address | *(empty, use simulation)* |
-| `NEXT_PUBLIC_NOTIFICATION_CONTRACT_ADDRESS` | Deployed Notification contract address | *(empty, use simulation)* |
-| `NEXT_PUBLIC_HISTORY_CONTRACT_ADDRESS` | Deployed History contract address | *(empty, use simulation)* |
+| `NEXT_PUBLIC_PAYMENT_CONTRACT_ADDRESS` | Deployed Payment contract address | `CBO6LMWJTBH2RHUS7YZUSM5H7Y6IMXYRHFGZYC6PAOICU3GSFMCJ6B2D` |
+| `NEXT_PUBLIC_NOTIFICATION_CONTRACT_ADDRESS` | Deployed Notification contract address | `CB2TFJIKEF3YG2TYOB5FZZ6C4GGAZQ3KL43NFWHTR2QTUYCT5ODCLWPT` |
+| `NEXT_PUBLIC_HISTORY_CONTRACT_ADDRESS` | Deployed History contract address | `CDQJ6EAAXWUHGVXB6E2WJFZF3JJK3OSAQ2MYWWXF3ZLHU4JFKPTAKCZO` |
 | `NEXT_PUBLIC_ENABLE_EVENTS` | Enable real-time event streaming | `true` |
 | `NEXT_PUBLIC_POLL_INTERVAL_MS` | Event polling interval | `5000` |
 
@@ -615,23 +616,17 @@ Open [http://localhost:3000](http://localhost:3000), connect Freighter wallet, a
 | `HostError: Error(WasmVm, InvalidAction)` | Update stellar CLI: `curl -fsSL https://github.com/stellar/stellar-cli/install.sh \| sh` |
 | `Transaction simulation failed` | The testnet RPC may be temporarily degraded. Wait and retry |
 
-### Contract Addresses
+### Deployed Contract Addresses
 
-_Update these after deploying to testnet. Until then, the frontend runs in simulation mode._
+All three contracts are deployed and live on **Stellar Testnet**:
 
-| Contract | Testnet Address | Mainnet Address |
-|----------|----------------|-----------------|
-| **Payment** | *(deploy to get)* | *(deploy to get)* |
-| **Notification** | *(deploy to get)* | *(deploy to get)* |
-| **History** | *(deploy to get)* | *(deploy to get)* |
+| Contract | Testnet Address | Explorer |
+|----------|----------------|----------|
+| **Payment** | `CBO6LMWJTBH2RHUS7YZUSM5H7Y6IMXYRHFGZYC6PAOICU3GSFMCJ6B2D` | [View](https://stellar.expert/explorer/testnet/contract/CBO6LMWJTBH2RHUS7YZUSM5H7Y6IMXYRHFGZYC6PAOICU3GSFMCJ6B2D) |
+| **Notification** | `CB2TFJIKEF3YG2TYOB5FZZ6C4GGAZQ3KL43NFWHTR2QTUYCT5ODCLWPT` | [View](https://stellar.expert/explorer/testnet/contract/CB2TFJIKEF3YG2TYOB5FZZ6C4GGAZQ3KL43NFWHTR2QTUYCT5ODCLWPT) |
+| **History** | `CDQJ6EAAXWUHGVXB6E2WJFZF3JJK3OSAQ2MYWWXF3ZLHU4JFKPTAKCZO` | [View](https://stellar.expert/explorer/testnet/contract/CDQJ6EAAXWUHGVXB6E2WJFZF3JJK3OSAQ2MYWWXF3ZLHU4JFKPTAKCZO) |
 
-### Transaction Hash (Contract Interaction)
-
-_Update this after creating a payment on testnet._
-
-| Transaction | Hash | Explorer Link |
-|-------------|------|---------------|
-| Example payment creation | *(send a transaction)* | *(paste explorer link)* |
+> **Deployment Date:** July 25, 2026 | **Deployer Identity:** `alice` | **Network:** Stellar Testnet
 
 ---
 
