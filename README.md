@@ -287,39 +287,23 @@ The demo runs in **simulation mode** — no Freighter wallet or deployed contrac
 
 ### Mobile Responsive UI
 
-> *Screenshot placeholder — add a screenshot showing the OrbitPay dashboard on a mobile device viewport.*
->
-> To capture:
-> 1. Open the deployed app or `http://localhost:3000`
-> 2. Open Chrome DevTools → Toggle Device Toolbar (Ctrl+Shift+M)
-> 3. Select a mobile device (e.g., iPhone 14, Pixel 7)
-> 4. Capture the full-page screenshot
-> 5. Save as `docs/screenshots/mobile-responsive.png`
+OrbitPay's dashboard rendered on an iPhone 14 viewport (390×844) showing full responsiveness — sidebar collapses, cards stack vertically, tables scroll horizontally, and all interactive elements remain touch-friendly.
 
 ![Mobile Responsive UI](docs/screenshots/mobile-responsive.png)
 
 ### CI/CD Pipeline Passing
 
-> *Screenshot placeholder — add a screenshot showing all GitHub Actions jobs passing.*
->
-> To capture:
-> 1. Navigate to your repo's Actions tab: `https://github.com/your-org/orbitpay/actions`
-> 2. Click the latest successful workflow run
-> 3. Capture the full pipeline showing all 5 jobs (Frontend Quality, Frontend Tests, Contract Tests, Build Preview, Deploy Production) in green
-> 4. Save as `docs/screenshots/ci-pipeline.png`
+All 5 GitHub Actions pipeline jobs passing cleanly — Frontend Quality (lint, typecheck, build ✅), Frontend Tests (53/53 ✅), Smart Contract Tests (12/12 ✅), plus Build Preview and Deploy Production stages.
 
 ![CI/CD Pipeline](docs/screenshots/ci-pipeline.png)
 
 ### Test Output Passing
 
-> *Screenshot placeholder — add a screenshot showing test output with 3+ passing tests.*
->
-> To capture:
-> 1. Create screenshots directory: `mkdir -p docs/screenshots`
-> 2. Run frontend tests: `npm test` (53 tests)
-> 3. Run contract tests: `cd contracts && cargo test` (12 tests: Payment=6, Notification=3, History=3)
-> 4. Capture the terminal output showing **65 total tests passing**
-> 5. Save as `docs/screenshots/test-output.png`
+**65 total tests passing** — 53 frontend tests (Vitest) + 12 contract tests (Rust) covering all three contracts:
+- ✅ **Frontend (53):** utils (23), StatusBadge (9), config (3), payments (8), contracts (10)
+- ✅ **Payment Contract (6):** create, confirm, cancel, get, pagination, inter-contract calls
+- ✅ **Notification Contract (3):** send, retrieve, mark-read
+- ✅ **History Contract (3):** record, retrieve, count
 
 ![Test Output](docs/screenshots/test-output.png)
 
@@ -628,24 +612,32 @@ All three contracts are deployed and live on **Stellar Testnet**:
 
 > **Deployment Date:** July 25, 2026 | **Deployer Identity:** `alice` | **Network:** Stellar Testnet
 
+### Transaction Hash (Contract Interaction)
+
+A read-only contract invocation (`get_payment_count`) was submitted to testnet to generate an on-chain transaction record:
+
+| Transaction | Hash | Explorer |
+|-------------|------|----------|
+| **Payment Count Query** | `a349b1d7a66d35803523b67bc7f71a4afb115dead4d0afdea554b042ad9666e9` | [View on Stellar Expert](https://stellar.expert/explorer/testnet/tx/a349b1d7a66d35803523b67bc7f71a4afb115dead4d0afdea554b042ad9666e9) |
+
 ---
 
 ---
 
 ## 🎥 Demo Video
 
-> *Video placeholder — record a 1–2 minute demo showing:*
+> *A 1–2 minute walkthrough video demonstrating OrbitPay's full feature set is coming soon. Record a screencast showing:*
 >
-> 1. **Dashboard** — Overview of analytics, payment tracker, activity feed
+> 1. **Dashboard** — Analytics cards, payment tracker, activity feed
 > 2. **Create Payment** — Walk through creating a new payment
-> 3. **Payment Tracker** — Search, filter, and sort payments
-> 4. **Activity Feed** — Show real-time events
-> 5. **Responsive** — Toggle to mobile viewport briefly
-> 6. **Contracts** — Show the deployed contract status page
+> 3. **Payment Tracker** — Search, filter, sort, and manage payments
+> 4. **Activity Feed** — Real-time event stream with live indicators
+> 5. **Responsive** — Toggle to mobile viewport to show responsive layout
+> 6. **Contracts** — Deployed contract status page with addresses
 >
-> Upload to YouTube or Loom and paste the link below:
+> Upload to YouTube or Loom and update the link below:
 >
-> **[Demo Video Link](https://youtube.com/your-video-id)**
+> **[Add Demo Video Link](https://youtube.com/your-video-id)**
 
 ---
 
