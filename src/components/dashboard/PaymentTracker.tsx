@@ -11,7 +11,6 @@ import { StatusBadge } from '@/components/ui/StatusBadge';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { PaymentListSkeleton } from '@/components/ui/LoadingSkeleton';
 import { truncateAddress, formatAmount, formatRelativeTime } from '@/lib/utils';
-import { buildExplorerUrl, buildAccountExplorerUrl } from '@/lib/stellar';
 
 interface PaymentTrackerProps {
   payments: Payment[];
@@ -26,6 +25,11 @@ interface PaymentTrackerProps {
 
 type SortField = 'id' | 'amount' | 'status' | 'created_at';
 type SortDirection = 'asc' | 'desc';
+
+function SortIcon({ field, sortField, sortDirection }: { field: SortField; sortField: SortField; sortDirection: SortDirection }) {
+  if (sortField !== field) return <span className="ml-1 text-gray-300">↕</span>;
+  return <span className="ml-1 text-blue-600">{sortDirection === 'asc' ? '↑' : '↓'}</span>;
+}
 
 export function PaymentTracker({
   payments,
@@ -81,11 +85,6 @@ export function PaymentTracker({
       setSortField(field);
       setSortDirection('desc');
     }
-  };
-
-  const SortIcon = ({ field }: { field: SortField }) => {
-    if (sortField !== field) return <span className="ml-1 text-gray-300">↕</span>;
-    return <span className="ml-1 text-blue-600">{sortDirection === 'asc' ? '↑' : '↓'}</span>;
   };
 
   if (loading) {
@@ -206,7 +205,7 @@ export function PaymentTracker({
                   className="cursor-pointer px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase hover:text-gray-700"
                   onClick={() => handleSort('id')}
                 >
-                  ID <SortIcon field="id" />
+                  ID <SortIcon field="id" sortField={sortField} sortDirection={sortDirection} />
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Payer / Payee
@@ -215,13 +214,13 @@ export function PaymentTracker({
                   className="cursor-pointer px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase hover:text-gray-700"
                   onClick={() => handleSort('amount')}
                 >
-                  Amount <SortIcon field="amount" />
+                  Amount <SortIcon field="amount" sortField={sortField} sortDirection={sortDirection} />
                 </th>
                 <th
                   className="cursor-pointer px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase hover:text-gray-700"
                   onClick={() => handleSort('status')}
                 >
-                  Status <SortIcon field="status" />
+                  Status <SortIcon field="status" sortField={sortField} sortDirection={sortDirection} />
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Metadata
@@ -230,7 +229,7 @@ export function PaymentTracker({
                   className="cursor-pointer px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase hover:text-gray-700"
                   onClick={() => handleSort('created_at')}
                 >
-                  Date <SortIcon field="created_at" />
+                  Date <SortIcon field="created_at" sortField={sortField} sortDirection={sortDirection} />
                 </th>
                 <th className="px-4 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase">
                   Actions

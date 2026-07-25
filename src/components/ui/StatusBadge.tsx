@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { getStatusColor, getStatusLabel, getTransactionStateColor } from '@/lib/utils';
+import { getStatusColor, getStatusLabel } from '@/lib/utils';
 import { PaymentStatus, TransactionState } from '@/types';
 
 // ============================================================================

@@ -6,7 +6,7 @@
  * Used for payment creation, confirmations, and detail views.
  */
 
-import React, { useState, useEffect, useCallback, ReactNode } from 'react';
+import React, { useState, useEffect, useCallback, useRef, ReactNode } from 'react';
 
 interface ModalProps {
   isOpen: boolean;
@@ -32,26 +32,39 @@ export function Modal({
   size = 'md',
   showCloseButton = true,
 }: ModalProps) {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const rafRef = useRef<number | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (isOpen) {
-      setIsAnimating(true);
-      requestAnimationFrame(() => setIsVisible(true));
-      // Prevent body scroll
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setMounted(true);
       document.body.style.overflow = 'hidden';
-    } else {
-      setIsVisible(false);
-      const timer = setTimeout(() => {
-        setIsAnimating(false);
+      return () => {
         document.body.style.overflow = '';
-      }, 200);
-      return () => clearTimeout(timer);
+      };
     }
-
+    // Delay unmount to allow exit animation
+    timerRef.current = setTimeout(() => {
+      setMounted(false);
+    }, 200);
     return () => {
-      document.body.style.overflow = '';
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [isOpen]);
+
+  // Track visibility for animation via ref to avoid cascading renders
+  const [isVisible, setIsVisible] = useState(false);
+  useEffect(() => {
+    if (isOpen) {
+      rafRef.current = requestAnimationFrame(() => setIsVisible(true));
+    } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsVisible(false);
+    }
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, [isOpen]);
 
@@ -70,7 +83,7 @@ export function Modal({
     }
   }, [isOpen, handleKeyDown]);
 
-  if (!isAnimating && !isOpen) return null;
+  if (!mounted && !isOpen) return null;
 
   return (
     <div

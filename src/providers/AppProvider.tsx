@@ -7,7 +7,6 @@
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { ToastMessage } from '@/types';
-import { useEvents } from '@/hooks/useEvents';
 import { generateId } from '@/lib/utils';
 import { ToastContainer } from '@/components/ui/Toast';
 

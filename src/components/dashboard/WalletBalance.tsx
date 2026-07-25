@@ -9,7 +9,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useWalletContext } from '@/providers/WalletProvider';
 import { fetchAccountBalances } from '@/services/contracts';
-import { truncateAddress, formatTimestamp } from '@/lib/utils';
+import { truncateAddress } from '@/lib/utils';
 
 interface AssetBalance {
   asset: string;
@@ -17,27 +17,30 @@ interface AssetBalance {
 }
 
 export function WalletBalance() {
-  const { wallet, isConnecting, connect, isInstalled, disconnect } = useWalletContext();
+  const { wallet, connect, isInstalled } = useWalletContext();
   const [balances, setBalances] = useState<AssetBalance[]>([]);
   const [loading, setLoading] = useState(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
 
+  const walletAddress = wallet?.address ?? null;
+
   const loadBalances = useCallback(async () => {
-    if (!wallet?.address) return;
+    if (!walletAddress) return;
 
     setLoading(true);
     try {
-      const result = await fetchAccountBalances(wallet.address);
+      const result = await fetchAccountBalances(walletAddress);
       setBalances(result);
     } catch {
       // Balances are optional — silently fail
     } finally {
       setLoading(false);
     }
-  }, [wallet?.address]);
+  }, [walletAddress]);
 
   useEffect(() => {
-    loadBalances();
+    const timer = setTimeout(() => loadBalances(), 0);
+    return () => clearTimeout(timer);
   }, [loadBalances]);
 
   const handleCopyAddress = async () => {

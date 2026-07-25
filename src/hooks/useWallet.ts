@@ -27,11 +27,7 @@ export function useWallet(): WalletState {
   const [wallet, setWallet] = useState<WalletInfo | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isInstalled, setIsInstalled] = useState(false);
-
-  useEffect(() => {
-    setIsInstalled(isFreighterInstalled());
-  }, []);
+  const [isInstalled] = useState(() => isFreighterInstalled());
 
   const connect = useCallback(async () => {
     if (isConnecting) return;

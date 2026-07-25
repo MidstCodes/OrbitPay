@@ -6,7 +6,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { Payment, CreatePaymentRequest, TransactionState, ToastMessage } from '@/types';
+import { Payment, CreatePaymentRequest, TransactionState } from '@/types';
 import {
   initiatePayment,
   initiateConfirmPayment,
@@ -85,7 +85,8 @@ export function usePayments(
   }, [address, role, filters]);
 
   useEffect(() => {
-    loadPayments();
+    const timer = setTimeout(() => loadPayments(), 0);
+    return () => clearTimeout(timer);
   }, [loadPayments]);
 
   const createPayment = useCallback(

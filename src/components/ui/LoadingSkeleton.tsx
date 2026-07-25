@@ -51,7 +51,7 @@ export function TableRowSkeleton({ cols = 5 }: { cols?: number }) {
         <td key={i} className="px-4 py-3">
           <div
             className="h-4 rounded bg-gray-200"
-            style={{ width: `${60 + Math.random() * 30}%` }}
+            style={{ width: `${60 + (i * 7) % 30}%` }}
           />
         </td>
       ))}

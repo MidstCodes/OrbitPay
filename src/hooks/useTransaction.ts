@@ -6,7 +6,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { TransactionLifecycle, TransactionState, Payment } from '@/types';
+import { TransactionLifecycle, TransactionState } from '@/types';
 import { getTransaction, onTransactionUpdate, getAllTransactions } from '@/services/payments';
 
 interface TransactionStateHook {
@@ -32,16 +32,17 @@ export function useTransaction(transactionId?: string): TransactionStateHook {
 
   useEffect(() => {
     if (!txId) {
-      setCurrentTx(null);
-      setState('idle');
       return;
     }
 
-    // Get initial state
+    // Get initial state - defer to avoid cascading renders
     const tx = getTransaction(txId);
     if (tx) {
-      setCurrentTx(tx);
-      setState(tx.state);
+      const t = setTimeout(() => {
+        setCurrentTx(tx);
+        setState(tx.state);
+      }, 0);
+      return () => clearTimeout(t);
     }
 
     // Subscribe to updates
@@ -58,8 +59,6 @@ export function useTransaction(transactionId?: string): TransactionStateHook {
     const interval = setInterval(() => {
       setAllTransactions(getAllTransactions());
     }, 3000);
-
-    setAllTransactions(getAllTransactions());
     return () => clearInterval(interval);
   }, []);
 

@@ -11,8 +11,6 @@ import {
   startEventPolling,
   stopEventPolling,
   subscribeToAllEvents,
-  subscribeToEvents,
-  paymentToActivity,
 } from '@/services/events';
 import { generateId } from '@/lib/utils';
 
@@ -42,8 +40,7 @@ export function useEvents(): EventState & {
   useEffect(() => {
     mountedRef.current = true;
 
-    // Start polling
-    setIsPolling(true);
+    // Start polling - will set state asynchronously
     const stop = startEventPolling();
 
     // Subscribe to all events
