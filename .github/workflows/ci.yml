@@ -19,7 +19,7 @@ concurrency:
 
 env:
   NODE_VERSION: '20'
-  RUST_VERSION: '1.85'
+  RUST_VERSION: '1.97.0'
 
 jobs:
   # ==========================================================================
@@ -77,16 +77,9 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npm test -- --coverage
+        run: npm test
         env:
           CI: true
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: coverage-report
-          path: coverage/
 
   # ==========================================================================
   # Smart Contract Tests
@@ -103,7 +96,9 @@ jobs:
         uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: ${{ env.RUST_VERSION }}
-          target: wasm32v1-none
+
+      - name: Add WASM target
+        run: rustup target add wasm32v1-none
 
       - name: Cache Cargo dependencies
         uses: actions/cache@v4
@@ -116,13 +111,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-
 
-      - name: Build contracts
-        run: |
-          cd contracts
-          CARGO_BUILD_TARGET=wasm32v1-none cargo build --release 2>&1 | tail -5
-        continue-on-error: true
+      - name: Verify Rust toolchain
+        run: rustc --version && cargo --version
 
-      - name: Run contract tests
+      - name: Build and test contracts
         run: |
           cd contracts
           cargo test 2>&1
